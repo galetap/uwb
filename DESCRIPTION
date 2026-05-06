@@ -1,0 +1,25 @@
+Package: uwb
+Title: GangA Settings
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Patrik", family = "Galeta",
+        email = "galeta@ff.zcu.cz", role = c("aut", "cre")),
+      person(given = "Martina", family = "Stipkova",
+        email = "marsti@gapps.zcu.cz", role = c("aut")))
+Description: Setting workspace for GangA at the UWB.
+License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5)
+Imports: 
+    dplyr,
+    forcats,
+    ggplot2,
+    ggtext,
+    glue,
+    magrittr,
+    rlang,
+    stringr,
+    tidyr
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0

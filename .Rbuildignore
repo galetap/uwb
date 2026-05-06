@@ -1,0 +1,12 @@
+^uwb\.Rproj$
+^\.Rproj\.user$
+^\.positai$
+^\.claude$
+^data-raw$
+^LICENSE\.md$
+^dev$
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^\.git$
+^\.Rhistory$
