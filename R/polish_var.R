@@ -19,28 +19,28 @@
 polish_var <- function(dat, var_origin = "xvar_df", var_final = "xvar",
                        wrap = TRUE, chrnum = .uwb_vals$chrnum, nsize = TRUE){
   d <- dat |>
-    mutate(
-      vvar = as_factor(.data[[var_origin]]),
+    dplyr::mutate(
+      vvar = forcats::as_factor(.data[[var_origin]]),
       vvar_nr = as.numeric(vvar)
     )
 
   if (wrap) {
     d <- d |>
-      mutate(vvar = str_wrap(vvar, width = chrnum) |>
-               str_replace_all("\n", "<br>"))
+      dplyr::mutate(vvar = stringr::str_wrap(vvar, width = chrnum) |>
+                      stringr::str_replace_all("\n", "<br>"))
   }
 
   if(nsize) {
     d <- d |>
-      mutate(vvar = case_when(
-        nsize < 20 ~ glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize1}'>n = {nsize}</span>"),
-        nsize < 30 ~ glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize2}'>n = {nsize}</span>"),
-        TRUE ~ glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize3}'>n = {nsize}</span>")
+      dplyr::mutate(vvar = dplyr::case_when(
+        nsize < 20 ~ glue::glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize1}'>n = {nsize}</span>"),
+        nsize < 30 ~ glue::glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize2}'>n = {nsize}</span>"),
+        TRUE ~ glue::glue("{vvar}<br><span style = 'color:{.uwb_vals$c_nsize3}'>n = {nsize}</span>")
       ))
   }
 
   d <- d |>
-    mutate(vvar = factor(vvar, levels = unique(vvar[order(vvar_nr)]))) |> # This works fine with grouped data
-    rename({{var_final}} := vvar) |>
-    select(-vvar_nr)
+    dplyr::mutate(vvar = factor(vvar, levels = unique(vvar[order(vvar_nr)]))) |> # This works fine with grouped data
+    dplyr::rename({{var_final}} := vvar) |>
+    dplyr::select(-vvar_nr)
 }

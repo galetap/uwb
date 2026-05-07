@@ -3,37 +3,38 @@
 # General size for theme
 .tsize <- 10
 
-# uwb_val ---------------
-.uwb_vals <- list(
+# uwb_vals - definováno jako environment pro dynamické změny (např. font v zzz.R)
+.uwb_vals <- list2env(list(
   # Font
-  # font = "Franklin Gothic",
   font = "Franklin Gothic",
-  # font = c("Franklin Gothic",
-  #          "Franklin Gothic Book",
-  #          "sans"),
+
   # Text sizes
   tsize = 10, # main text size; influences theme and labsizes
   labsize = (1.25 * 10) / 2.54, # size of text labels in plots
   chrnum = 30, # number of characters before line break in axis labels
-  lineheight_tit = 1, # space between lines in titlea and subtitle labels
+  lineheight_tit = 1, # space between lines in title and subtitle labels
   lineheight = 0.75, # space between lines in axis labels
+
   # Position of text labels
   lim_single_pos = 5, # Position of text label inside vs. outside bar in barplots
   lim_stack_no = 5, # Whether text labels is printed in a stacked barplot
+
   # Line and point sizes
   axissize = 0.25, # Width of axes
   linesize = 1, # Width of lines in a line plot
   pointsize = 8, # size of circles in lollipop, scatter and trend plots
+
   # Line colors (except palettes that go into aes)
   barcol = "white", # Outline of bars
   gridcol = "gray85", # Plot grid
   lollistick = "gray35",
   axiscol = 'grey35', # Color for axis is muted because values are labelled
+
   # color of N sizes: very small, small, enough
   c_nsize1 = "#c73a3a",
   c_nsize2 = "#944e4e",
   c_nsize3 = "grey35"
-)
+), parent = emptyenv())
 
 
 # University colors ------------------------------------------------------------
