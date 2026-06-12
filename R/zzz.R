@@ -21,6 +21,17 @@
       # Stačí rovnou zapsat novou hodnotu do "slotu" font.
       ns$.uwb_vals$font <- "sans"
     }
+
+    # 4. Wire the public exported names to the internal objects so that
+    #    reference semantics are preserved: user changes to uwb_vals propagate
+    #    to the internal .uwb_vals used by the plot/theme functions.
+    unlockBinding("uwb_vals", ns)
+    assign("uwb_vals", ns$.uwb_vals, envir = ns)
+    lockBinding("uwb_vals", ns)
+
+    unlockBinding("uwb_scales", ns)
+    assign("uwb_scales", ns$.uwb_scales, envir = ns)
+    lockBinding("uwb_scales", ns)
   }
 }
 
