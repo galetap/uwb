@@ -1,0 +1,246 @@
+---
+title: "Getting started with uwb"
+vignette: >
+  %\VignetteIndexEntry{Getting started with uwb}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+format:
+  html:
+    page-layout: full
+    mainfont: Open Sans
+toc: true
+editor: source
+---
+
+```{r include=FALSE}
+rm(list = ls())
+library(tidyverse)
+library(uwb)
+```
+
+# Introduction
+
+The `uwb` package provides a set of objects, functions, themes, and color palettes for easy and consistent data visualization at the Quality Department of the University of West Bohemia. The main components are:
+
+-   **Objects** — built-in dataset, faculty names and colors, visual settings
+-   **Data preparation functions** — `prep_*()` and `mean_bat*()` families for reshaping survey data into a plot-ready format
+-   **Plot functions** — `plot_*()` family for bar charts, lollipop plots, stacked and dodge plots, trend plots
+-   **Theme** — `theme_uwb()` and `theme_uwb_horiz()` for a consistent visual style
+-   **Color scales** — `scale_fill_uwb()` and `scale_color_uwb()` with built-in UWB color palettes
+
+Dedicated vignettes cover themes and colors (*UWB theme and colors*) and data preparation and plot functions (*Data preparation and plotting*) in detail. This vignette focuses on installation, built-in objects, and the general workflow.
+
+# Installation
+
+``` r
+# Install remotes if you don't have it yet
+install.packages("remotes")
+
+# Install galetap/uwb from GitHub
+remotes::install_github("galetap/uwb")
+
+# Reinstall when the package is updated on GitHub
+remotes::install_github("galetap/uwb", force = TRUE)
+```
+
+After installation, load the package in every session:
+
+``` r
+library(uwb)
+```
+
+# Objects
+
+The package provides several built-in objects. After loading the package with `library(uwb)`, they are available directly in the session without any further loading step.
+
+## Example dataset: `data`
+
+`data` is a data frame intended for demonstrating the data preparation and plotting functions. Rows are respondents; columns are variables of different types that cover the main use cases of the package:
+
+-   `fak` — faculty (categorical, single choice)
+-   `rok` — academic year (categorical, single choice)
+-   `pohlavi` — gender (categorical, single choice)
+-   `typ` — type of study (categorical, single choice)
+-   `num1`–`num5` — numeric ratings (e.g. satisfaction on a 0–10 scale)
+-   `mc1`–`mc5` — multiple choice items (0/1 coded: 1 = chosen)
+-   `bat1`–`bat5` — battery items with identical ordered response options (e.g. agree / neutral / disagree)
+
+```{r}
+head(data)
+```
+
+```{r}
+glimpse(data)
+```
+
+## Faculty and institute names: `faks` and `parts`
+
+`faks` is a named character vector mapping short faculty codes to their full Czech names. The names of the vector are the short codes used in data (e.g. `"FAV"`); the values are the full names for plot labels.
+
+```{r}
+faks
+```
+
+`parts` is the equivalent for the non-faculty university institutes (e.g. NTC, UJP).
+
+```{r}
+parts
+```
+
+These vectors are useful for recoding factor levels in raw data to display-ready labels, and they define the order of faculties in faculty-scale plots.
+
+## Visual settings: `uwb_vals`
+
+`uwb_vals` is a list (implemented internally as an environment) that stores the default values controlling the visual appearance of themes and plots — font family, text sizes, line widths, point sizes, and fixed colors used outside aesthetic mappings. The `plot_*()` functions and `theme_uwb()` read these values internally, so changing a value in `uwb_vals` affects all subsequent plots without any additional arguments.
+
+```{r}
+as.list(uwb_vals)
+```
+
+Example: increase the base text size globally.
+
+``` r
+uwb_vals$tsize <- 12
+```
+
+## University color: `c_zcu`
+
+`c_zcu` is the official dark-blue color of the University of West Bohemia as a hex string. It is used as the default single-color in plots.
+
+```{r}
+c_zcu
+```
+
+## Faculty and institute colors: `c_faks` and `c_parts`
+
+`c_faks` is a named character vector with the official colors of the nine faculties, in the same alphabetical order as `faks`. `c_parts` is the equivalent for non-faculty institutes.
+
+```{r}
+c_faks
+```
+
+```{r}
+c_parts
+```
+
+These vectors can be used directly when a manual color assignment is needed — for example, to highlight a single faculty in a plot using `scale_fill_manual(values = c_faks)`.
+
+## Color scale definitions: `uwb_scales`
+
+`uwb_scales` is a named list of color hex vectors that define the built-in color scales. It is used internally by `scale_fill_uwb()` and `scale_color_uwb()`, but can also be inspected or used directly to build custom color sequences.
+
+```{r}
+names(uwb_scales)
+```
+
+The available scales are: `quali`, `faks`, `uwb_faks`, `mono`, `mono_rev`, `monored`, `monored_rev`, `long`, `long_rev`, `bi`, `bi_rev`. See the *UWB theme and colors* vignette for visual examples of all scales.
+
+# Overview of functions
+
+## Data preparation functions
+
+The `prep_*()` functions transform a raw data frame into a plot-ready tibble. Each function computes relative frequencies (percentages), generates text labels and their positions, and automatically imports plot titles from a `codebook` object if one exists in the environment (see [The codebook object] below).
+
+| Function | What it does |
+|---|---|
+| `prep_single()` | Distribution of a single categorical variable |
+| `prep_gr()` | Distribution of a categorical variable by one grouping variable |
+| `prep_gr2()` | Distribution of a categorical variable by two grouping variables |
+| `prep_mc()` | Distribution of a multiple choice question (0/1 coded columns) |
+| `prep_mc_gr()` | Multiple choice distribution by a grouping variable |
+| `prep_bat()` | Distribution of a battery of items with identical response options |
+| `prep_bat_gr()` | Battery distribution by a grouping variable |
+| `mean_bat()` | Mean scores of a set of numeric variables |
+| `mean_bat_gr()` | Mean scores by one grouping variable |
+| `mean_bat_gr2()` | Mean scores by two grouping variables |
+
+### Auxiliary data preparation functions
+
+These functions are called internally by the `prep_*()` functions but can also be used directly for custom workflows.
+
+| Function | What it does |
+|---|---|
+| `generate_textlabs()` | Generates text label columns (`labvar`, `pos`, `cvar_text`) from `yvar` and `n` |
+| `impute_labs()` | Imports `title`, `subtitle`, `caption`, and `lab` from a `codebook` object |
+| `polish_var()` | Wraps long labels and drops unused factor levels in a grouping variable |
+
+## Plot functions
+
+| Function | What it does |
+|---|---|
+| `plot_bar()` | Bar chart (horizontal by default) |
+| `plot_lolli()` | Lollipop chart |
+| `plot_stack()` | Stacked bar chart for grouped data |
+| `plot_dodge()` | Dodge (side-by-side) bar chart for grouped data |
+| `plot_trend()` | Line + point trend plot for a single variable over time |
+| `plot_trend_gr()` | Trend plot for multiple variables simultaneously |
+| `plot_out()` | Bar chart highlighting faculties with extreme values |
+| `plot_ribbon()` | Ribbon plot |
+
+## Exploratory functions
+
+`ex1()` and `ex2()` are quick helpers for inspecting the distribution of one or two variables in a data frame during data exploration (counts and percentages printed to the console).
+
+```{r}
+ex1(data, fak)
+```
+
+```{r}
+ex2(data, fak, typ)
+```
+
+# General workflow
+
+The typical workflow for producing a plot has two steps: (1) prepare the plot data with a `prep_*()` function, then (2) pass it to a `plot_*()` function.
+
+```{r echo=TRUE, warning=FALSE}
+# Step 1: prepare the plot data
+plot_data <- prep_single(data, fak)
+head(plot_data)
+```
+
+```{r echo=TRUE, warning=FALSE}
+# Step 2: plot
+plot_bar(plot_data)
+```
+
+The two steps can be combined in a single pipeline. The pipeline also makes it easy to add or modify columns between preparation and plotting — for example, to insert a plot title manually:
+
+```{r echo=TRUE, warning=FALSE}
+prep_single(data, fak) |>
+  mutate(title = "Distribution by faculty") |>
+  plot_bar()
+```
+
+By default, `plot_bar()` produces a horizontal bar chart. Set `horiz = FALSE` for a vertical chart:
+
+```{r echo=TRUE, warning=FALSE}
+prep_single(data, fak) |>
+  mutate(title = "Distribution by faculty") |>
+  plot_bar(horiz = FALSE)
+```
+
+## The codebook object
+
+Each `prep_*()` function looks for an object named `codebook` in the calling environment and tries to import plot labels (`title`, `subtitle`, `caption`, and `lab` for batteries) from it. If no such object exists, those columns are filled with empty strings.
+
+The `codebook` must be a data frame with the following columns:
+
+-   `name` — variable name as it appears in the dataset; used to match rows to the plot data
+-   `label` — full variable label or question wording
+-   `lab` — short item label for battery and multiple choice questions; `NA` for other variables
+-   `title` — plot title text
+-   `subtitle` — sample description (e.g. "UWB graduates, N = 450")
+-   `caption` — footnote text
+
+The package ships with a built-in `codebook` object that provides labels for the `data` dataset:
+
+```{r}
+print(codebook)
+```
+
+Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically:
+
+```{r echo=TRUE, warning=FALSE}
+prep_single(data, fak) |>
+  plot_bar()
