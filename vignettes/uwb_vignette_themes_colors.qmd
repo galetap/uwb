@@ -1,0 +1,160 @@
+---
+title: "UWB theme and colors"
+vignette: >
+  %\VignetteIndexEntry{UWB theme and colors}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+format:
+  html:
+    page-layout: full
+    mainfont: Open Sans
+toc: true
+editor: source
+---
+
+```{r include=FALSE}
+rm(list = ls())
+library(tidyverse)
+library(patchwork)
+library(uwb)
+```
+
+The `uwb` package includes a set of objects, functions, themes, and color palettes for easy and consistent data visualization at the Quality Department of the University of West Bohemia. This vignette focuses on themes and colors.
+
+## Functions and objects - overview
+
+This is a list of functions and objects used in this vignette.
+
+### Objects
+
+`faks`, `parts` Named vectors with full and short names of faculties and non-faculty university institutes.
+
+`uwb_vals` List of values that are used in theme and for plots (font, sizes of visual elements etc.).
+
+`c_zcu` The official color of the university (dark blue).
+
+`c_faks`, `c_parts` Named vectors with the official colors of faculties and non-faculty university institutes.
+
+`uwb_scales` List of color scales for plotting.
+
+`example_data` Example data to demonstrate the use of functions for data preparation and plotting; not used in this vignette.
+
+### Themes
+
+`theme_uwb()`
+
+`theme_uwb_horiz()`
+
+The `horiz` theme is for plots with flipped axes (e.g. horizontal bar charts).
+
+### Color functions
+
+The palettes work for discrete data only (i.e. isolated values without decimal places). The number of categories is not limited.
+
+`scale_fill_uwb()`
+
+`scale_color_uwb()` and `scale_colour_uwb()`
+
+`uwb_palettes()`
+
+## Color and Fill scales
+
+There are 5 built-in color scales that can be called from ggplot by `scale_fill_uwb("scale_name")` or `scale_color_uwb("scale_name")`.
+
+```{r include=FALSE}
+# Fake data to plot scales
+cd = tibble(yvar = rep(1, 10),
+            xvar = letters[1:10])
+
+# Starting plots to be built upon
+cplot = ggplot(cd, aes(xvar, yvar)) +
+  geom_col(aes(fill = xvar)) +
+  labs(y = "", x = "") +
+  theme_void() +
+  theme(legend.position = 'none')
+
+cplot_short = ggplot(cd[1:5, ], aes(xvar, yvar)) +
+  geom_col(aes(fill = xvar)) +
+  labs(y = "", x = "") +
+  theme_void() +
+  theme(legend.position = 'none')
+```
+
+```{r echo=FALSE, warning=FALSE, results='hide'}
+cplot1 = cplot + scale_fill_uwb("quali") +
+  labs(title = 'Qualitative scale "quali"')
+
+cplot2 = cplot +
+  scale_fill_uwb("faks") +
+  labs(title = 'UWB faculties "faks"')
+
+cplot3 = cplot_short +
+  scale_fill_uwb("mono", n = 5) +
+  labs(title = 'Monochromatic scale  "mono"')
+
+cplot4 = cplot + scale_fill_uwb("long", n = 10) +
+  labs(title = 'Long scale "long"')
+
+cplot5 = cplot_short + scale_fill_uwb("bi", n = 5) + labs(title = 'Bipolar scale "bi"')
+
+cplot1 / cplot2 / cplot3 / cplot4 / cplot5
+```
+
+-   The qualitative scale is the default in the `plot_*` functions (not shown in this vignette). The first item (blue) is the main color. It should be used in single-color plots. It is also included in the monochromatic and long scales as their mid-point.
+
+-   The faculty scale gives the colors for the faculties in alphabetical order. The last color (dark grey) is for the university in total.
+
+-   The monochromatic and long scales are for visualization of intensity, going from light to dark. Mono is suitable for ordinal variables with a low number of categories (up to 5). The long scale provides a longer hue range to cover more categories.
+
+-   The bipolar scale has darker poles and lighter middle values to visualize polarity (agree-disagree etc.). The blue pole is a darker version of the main blue color from the qualitative scale.
+
+The two qualitative scales (`quali` and `faks`) do not need any other arguments, just the name of the scale. The number of colors is set according to the number of categories. The ordinal scales need argument `n` which gives the number of categories. This generates the required number of steps in the color scale.
+
+### Examples of use
+
+The UWB theme is applied automatically by the package's `plot_*()` functions, so in normal use you do not call the theme directly — you prepare data with a `prep_*()` function and plot it with a `plot_*()` function. The examples below use the built-in `example_data`.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+# Bar plot of a single categorical variable (uses the theme internally)
+prep_single(example_data, fak) |>
+  mutate(title = "Distribution by faculty") |>
+  plot_bar()
+```
+
+The color and fill scale functions (`scale_fill_uwb()`, `scale_color_uwb()`) can be added to any ggplot. The following shows the qualitative scale applied to a manually built plot.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+ex_long <- example_data |>
+  count(fak, typ) |>
+  group_by(fak) |>
+  mutate(pct = 100 * n / sum(n)) |>
+  ungroup()
+
+ggplot(ex_long, aes(x = fak, y = pct, fill = typ)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.85, color = "white") +
+  scale_fill_uwb("quali") +
+  labs(x = "", y = "%", fill = "")
+```
+
+### Option `add_na`
+
+This option adds a grey color at the end of the scale for NA answers that are named factor levels. Real NA values are plotted as grey by default. But when we give them a name (e.g. "Don't know"), we want them to be grey instead of a color from the palette.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+ggplot(ex_long, aes(x = fak, y = pct, fill = typ)) +
+  geom_col(position = position_dodge(width = 0.85), width = 0.85, color = "white") +
+  scale_fill_uwb("quali", add_na = TRUE) +
+  labs(x = "", y = "%", fill = "")
+```
+
+### Option `reverse`
+
+Reverse scales can be called under their separate names ending with `_rev`.
+
+```{r echo=TRUE, warning=FALSE}
+names(uwb_scales)
+```
+
+### Function `uwb_palettes()`
+
+`uwb_palettes()` is used inside the `scale_fill/color_uwb()` functions and can also be called separately. For instance when creating asymmetric gradients with several levels of agreement and a definitive disagreement.

@@ -53,26 +53,6 @@ library(uwb)
 
 The package provides several built-in objects. After loading the package with `library(uwb)`, they are available directly in the session without any further loading step.
 
-## Example dataset: `data`
-
-`data` is a data frame intended for demonstrating the data preparation and plotting functions. Rows are respondents; columns are variables of different types that cover the main use cases of the package:
-
--   `fak` — faculty (categorical, single choice)
--   `rok` — academic year (categorical, single choice)
--   `pohlavi` — gender (categorical, single choice)
--   `typ` — type of study (categorical, single choice)
--   `num1`–`num5` — numeric ratings (e.g. satisfaction on a 0–10 scale)
--   `mc1`–`mc5` — multiple choice items (0/1 coded: 1 = chosen)
--   `bat1`–`bat5` — battery items with identical ordered response options (e.g. agree / neutral / disagree)
-
-```{r}
-head(data)
-```
-
-```{r}
-glimpse(data)
-```
-
 ## Faculty and institute names: `faks` and `parts`
 
 `faks` is a named character vector mapping short faculty codes to their full Czech names. The names of the vector are the short codes used in data (e.g. `"FAV"`); the values are the full names for plot labels.
@@ -105,7 +85,7 @@ uwb_vals$tsize <- 12
 
 ## University color: `c_zcu`
 
-`c_zcu` is the official dark-blue color of the University of West Bohemia as a hex string. It is used as the default single-color in plots.
+`c_zcu` is the official dark-blue color of the University of West Bohemia as a hex string. 
 
 ```{r}
 c_zcu
@@ -134,6 +114,22 @@ names(uwb_scales)
 ```
 
 The available scales are: `quali`, `faks`, `uwb_faks`, `mono`, `mono_rev`, `monored`, `monored_rev`, `long`, `long_rev`, `bi`, `bi_rev`. See the *UWB theme and colors* vignette for visual examples of all scales.
+
+## Example dataset: `example_data`
+
+`example_data` is a data frame intended for demonstrating the data preparation and plotting functions. Rows are respondents; columns are variables of different types that cover the main use cases of the package:
+
+-   `fak` — faculty (categorical, single choice)
+-   `rok` — academic year (categorical, single choice)
+-   `pohlavi` — gender (categorical, single choice)
+-   `typ` — type of study (categorical, single choice)
+-   `num1`–`num5` — numeric ratings (e.g. satisfaction on a 0–10 scale)
+-   `mc1`–`mc5` — multiple choice items (0/1 coded: 1 = chosen)
+-   `bat1`–`bat5` — battery items with identical ordered response options (e.g. agree / neutral / disagree)
+
+```{r}
+glimpse(example_data)
+```
 
 # Overview of functions
 
@@ -182,11 +178,11 @@ These functions are called internally by the `prep_*()` functions but can also b
 `ex1()` and `ex2()` are quick helpers for inspecting the distribution of one or two variables in a data frame during data exploration (counts and percentages printed to the console).
 
 ```{r}
-ex1(data, fak)
+ex1(example_data, fak)
 ```
 
 ```{r}
-ex2(data, fak, typ)
+ex2(example_data, fak, typ)
 ```
 
 # General workflow
@@ -195,7 +191,7 @@ The typical workflow for producing a plot has two steps: (1) prepare the plot da
 
 ```{r echo=TRUE, warning=FALSE}
 # Step 1: prepare the plot data
-plot_data <- prep_single(data, fak)
+plot_data <- prep_single(example_data, fak)
 head(plot_data)
 ```
 
@@ -207,15 +203,15 @@ plot_bar(plot_data)
 The two steps can be combined in a single pipeline. The pipeline also makes it easy to add or modify columns between preparation and plotting — for example, to insert a plot title manually:
 
 ```{r echo=TRUE, warning=FALSE}
-prep_single(data, fak) |>
-  mutate(title = "Distribution by faculty") |>
+prep_single(example_data, fak) |>
+  mutate(title = "Fakulta") |>
   plot_bar()
 ```
 
 By default, `plot_bar()` produces a horizontal bar chart. Set `horiz = FALSE` for a vertical chart:
 
 ```{r echo=TRUE, warning=FALSE}
-prep_single(data, fak) |>
+prep_single(example_data, fak) |>
   mutate(title = "Distribution by faculty") |>
   plot_bar(horiz = FALSE)
 ```
@@ -230,10 +226,10 @@ The `codebook` must be a data frame with the following columns:
 -   `label` — full variable label or question wording
 -   `lab` — short item label for battery and multiple choice questions; `NA` for other variables
 -   `title` — plot title text
--   `subtitle` — sample description (e.g. "UWB graduates, N = 450")
+-   `subtitle` — plot subtitle text
 -   `caption` — footnote text
 
-The package ships with a built-in `codebook` object that provides labels for the `data` dataset:
+The package ships with a built-in `codebook` object that provides labels for the `example_data` dataset:
 
 ```{r}
 print(codebook)
@@ -242,5 +238,6 @@ print(codebook)
 Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically:
 
 ```{r echo=TRUE, warning=FALSE}
-prep_single(data, fak) |>
+prep_single(example_data, fak) |>
   plot_bar()
+```

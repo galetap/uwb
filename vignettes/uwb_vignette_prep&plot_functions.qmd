@@ -1,0 +1,318 @@
+---
+title: "Data preparation and plotting"
+vignette: >
+  %\VignetteIndexEntry{Data preparation and plotting}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+format:
+  html:
+    page-layout: full
+    mainfont: Open Sans
+toc: true
+editor: source
+---
+
+```{r include=FALSE}
+rm(list = ls())
+library(tidyverse)
+library(uwb)
+```
+
+# Introduction
+
+Producing a chart with the `uwb` package is a **two-step workflow**: first you reshape your raw, respondent-level data into a plot-ready tibble with a `prep_*()` or `mean_*()` function, then you pass that tibble to a matching `plot_*()` function. Because the preparation functions always return the same standardised structure (a `yvar` with the value to be plotted, an `xvar` with the category, label columns, and so on), the plot functions know exactly how to consume it, and the two steps chain together naturally in a single pipeline.
+
+This vignette walks through both steps together. For each type of survey variable it shows the appropriate preparation function and then the plot it is designed for, so you can see the full path from data to finished chart.
+
+It covers the full family of preparation functions:
+
+-   `prep_single()`, `prep_gr()`, `prep_gr2()` — distributions of a categorical variable, optionally split by one or two grouping variables.
+-   `prep_mc()`, `prep_mc_gr()` — distributions of multiple choice questions (binary indicators of whether the item was chosen).
+-   `prep_bat()`, `prep_bat_gr()` — distributions of batteries of items that share the same response options.
+-   `mean_bat()`, `mean_bat_gr()`, `mean_bat_gr2()` — mean scores of numeric items, optionally split by one or two grouping variables.
+
+Each section pairs these with the relevant plotting functions — `plot_bar()`, `plot_lolli()`, `plot_stack()`, and `plot_dodge()` — and the vignette closes with a summary table mapping every preparation function to its typical plot. The three auxiliary helpers (`generate_textlabs()`, `impute_labs()`, `polish_var()`) that the preparation functions call internally are also described.
+
+All examples use the built-in `example_data` dataset and the built-in `codebook` (see the *Getting started with uwb* vignette for their structure, and *UWB theme and colors* for styling the resulting plots).
+
+```{r}
+glimpse(example_data)
+```
+
+# The shape of a prepared tibble
+
+Before going through each function, it helps to understand the columns that every preparation function produces. The exact set differs slightly between functions, but the most important ones are here:
+
+| Column | Meaning |
+|---|---|
+| `yvar` | The numeric value to be plotted — a **percentage** for the `prep_*()` functions, a **mean** for the `mean_*()` functions |
+| `n` | The raw count behind each `yvar` (frequency tables only) |
+| `nsize` | The group size (the denominator of the percentage / number of valid answers) |
+| `xvar` | The category placed on the category axis (final, plot-ready factor) |
+| `zvar` | A secondary category used for stacking / grouping (grouped and battery functions) |
+| `name` | The original variable name; used to match labels from the `codebook` |
+| `labvar`, `labvar_single`, `pos`, `pos_single`, `cvar_text` | Text-label content and positions, added by `generate_textlabs()` |
+| `title`, `subtitle`, `caption`, `lab` | Plot labels, added by `impute_labs()` from the `codebook` |
+
+Because the output is just a tibble, you can always inspect it, add columns, or override labels with `mutate()` before piping it into a `plot_*()` function.
+
+# Distribution of a categorical variable
+
+## `prep_single()` — a single variable
+
+`prep_single()` computes the distribution (relative frequencies, in percent) of one categorical variable.
+
+```{r}
+prep_single(example_data, fak)
+```
+
+Each row is a category of `fak`, `yvar` is its percentage, and `n` is the underlying count. The `subtitle` reports the total sample size as `N=...`.
+
+Key arguments:
+
+-   `order` — when `TRUE`, the categories are reordered by frequency (largest first), which is convenient for ranked bar charts.
+-   `drop_na` — when `TRUE` (the default), missing values of the variable are dropped before computing percentages.
+
+```{r}
+prep_single(example_data, fak, order = TRUE)
+```
+
+The typical use is to pipe the result straight into `plot_bar()`:
+
+```{r warning=FALSE}
+prep_single(example_data, fak) |>
+  plot_bar()
+```
+
+## `prep_gr()` — split by one grouping variable
+
+`prep_gr()` computes the distribution of `var` **within each level** of a grouping variable `grvar`. Percentages always sum to 100 % inside each group.
+
+```{r}
+prep_gr(example_data, typ, fak)
+```
+
+By default (`grvar_to_x = TRUE`) the **grouping variable** is placed on the category axis (`xvar`) and the variable of interest becomes the secondary category (`zvar`) used for stacking or dodging. This is the natural layout for "distribution of `typ` for each faculty". Set `grvar_to_x = FALSE` to swap the roles.
+
+Useful arguments:
+
+-   `add_total` — when `TRUE`, an extra pseudo-group containing all respondents is appended, labelled with `lab_total` (default `"ZČU"`). This makes it easy to compare each faculty against the university total.
+-   `show_nsize` — append the group size (`n=`) to the category labels.
+-   `x_wrap`, `x_chrnum`, `z_wrap`, `z_chrnum` — control line-wrapping of the `xvar` and `zvar` labels (see `polish_var()` below).
+
+```{r}
+prep_gr(example_data, typ, fak, add_total = TRUE)
+```
+
+The grouped output is meant for `plot_stack()` or `plot_dodge()`:
+
+```{r warning=FALSE}
+prep_gr(example_data, typ, fak, add_total = TRUE) |>
+  plot_stack()
+```
+
+## `prep_gr2()` — split by two grouping variables
+
+`prep_gr2()` extends `prep_gr()` with a second grouping variable `grvar2`. The first grouping variable (`grvar`) becomes the category axis, `var` becomes the stacking variable, and `grvar2` is kept (as `zzvarno`) for use as a facet.
+
+```{r}
+prep_gr2(example_data, typ, fak, pohlavi)
+```
+
+It accepts the same `add_total`, `grvar_to_x`, and wrapping arguments as `prep_gr()`.
+
+# Multiple choice questions
+
+Multiple choice items are stored as a **set of 0/1 columns**, one per option (1 = the option was chosen). The `prep_mc*()` functions summarise how often each option was chosen.
+
+## `prep_mc()` — overall multiple choice distribution
+
+`prep_mc()` takes the columns of the multiple choice block in `vars` and reports, for each item, the share of respondents who selected the value given in `chosen`. With 0/1 coded items, `chosen = 1` gives the percentage who chose each option.
+
+```{r}
+prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), chosen = 1)
+```
+
+Each row is one item; `yvar` is the percentage who chose it. When a `codebook` is available, the short item labels (`lab`) are used as the category labels.
+
+Arguments:
+
+-   `vars` — the item columns to summarise (defaults to all columns of `dat`).
+-   `chosen` — the value that counts as "selected".
+-   `order` — reorder items by frequency.
+-   `x_wrap`, `x_chrnum`, `x_nsize` — label wrapping and whether to append `n=` to labels.
+
+```{r warning=FALSE}
+prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
+        chosen = 1) |>
+  plot_bar()
+```
+
+## `prep_mc_gr()` — multiple choice by a grouping variable
+
+`prep_mc_gr()` computes the same selection percentages **within each level** of a grouping variable. The grouping variable goes on the category axis; the items become the secondary category (`zvar`).
+
+```{r}
+prep_mc_gr(example_data,
+           vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
+           grvar = fak, chosen = 1)
+```
+
+As with `prep_gr()`, `add_total = TRUE` appends an overall column for comparison, and the wrapping arguments behave the same way.
+
+# Batteries of items
+
+A **battery** is a block of items that share the same (usually ordered) response scale, e.g. a set of agree/neutral/disagree statements. The `prep_bat*()` functions report the distribution of the response options for every item.
+
+## `prep_bat()` — distribution of a battery
+
+`prep_bat()` pivots the battery columns to long form and computes, for each item, the percentage falling into each response category. The item name becomes `xvar` and the response value becomes `zvar`.
+
+```{r}
+prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
+```
+
+Arguments:
+
+-   `vars` — the battery item columns.
+-   `drop_na` — drop missing answers before computing percentages.
+-   `x_wrap`, `x_chrnum`, `x_nsize` — label wrapping / `n=` display for the item labels.
+
+This output is designed for `plot_stack()`, which produces one stacked bar per item:
+
+```{r warning=FALSE}
+prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5")) |>
+  plot_stack()
+```
+
+## `prep_bat_gr()` — battery split by a grouping variable
+
+`prep_bat_gr()` adds a grouping variable. Here the response value is `zvar`, the item name is `xvar`, and the grouping variable (`zzvar` / `zzvarno`) is kept for faceting.
+
+```{r}
+prep_bat_gr(example_data,
+            vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
+            grvar = pohlavi)
+```
+
+`add_total = TRUE` appends an overall ("ZČU") group, labelled via `lab_total`, so each item can be compared against the total.
+
+# Mean scores
+
+When items are numeric (e.g. ratings on a 0–10 scale), it is often more informative to report a **mean** than a full distribution. The `mean_*()` functions compute item means and return them in the same plot-ready shape, with `yvar` holding the mean instead of a percentage.
+
+The mean functions parse the item values with `readr::parse_number()`, treating the strings listed in `na_lab` (by default `"NA"` and `"Bez odpovědi"`) as missing. This lets them work both with numeric columns and with labelled/character columns that contain non-numeric "no answer" categories.
+
+## `mean_bat()` — means of a battery
+
+`mean_bat()` returns the mean (and sample size) of each numeric item in `vars`.
+
+```{r}
+mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"))
+```
+
+Arguments:
+
+-   `vars` — the numeric item columns.
+-   `round_places` — number of decimals used for the rounded label (`labvar_full`).
+-   `na_lab` — character values to treat as missing when parsing numbers.
+
+The result pairs naturally with `plot_lolli()` or `plot_bar()`:
+
+```{r warning=FALSE}
+mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5")) |>
+  plot_lolli()
+```
+
+## `mean_bat_gr()` — means by one grouping variable
+
+`mean_bat_gr()` computes item means **within each level** of a grouping variable. The grouping variable becomes the category axis (`xvar`, with `n=` appended), and the item name becomes the secondary category (`zvar`).
+
+```{r}
+mean_bat_gr(example_data,
+            vars = c("num1", "num2", "num3", "num4", "num5"),
+            grvar = fak)
+```
+
+`add_total = TRUE` appends an overall group (labelled with `lab_total`), which is handy for showing every faculty next to the university mean.
+
+```{r}
+mean_bat_gr(example_data,
+            vars = c("num1", "num2", "num3", "num4", "num5"),
+            grvar = fak, add_total = TRUE)
+```
+
+## `mean_bat_gr2()` — means by two grouping variables
+
+`mean_bat_gr2()` adds a second grouping variable. The first grouping variable (`grvar`) becomes `xvar`, the second (`grvar2`) becomes `zvar`, and item means are computed for every combination.
+
+```{r}
+mean_bat_gr2(example_data,
+             vars = c("num1", "num2", "num3", "num4", "num5"),
+             grvar = fak, grvar2 = pohlavi)
+```
+
+# Auxiliary functions
+
+The preparation functions share three internal helpers. They are exported, so they can also be used directly in custom workflows.
+
+## `generate_textlabs()` — text labels and positions
+
+`generate_textlabs()` takes a data frame that already contains a `yvar` column and adds the columns used by `geom_text()` in the plot functions:
+
+-   `labvar_full` — the rounded value.
+-   `labvar_single` — a character label for single-series bar charts (values below 0.5 are shown as `"<1"`).
+-   `labvar` — a character label used by stacked / dodged charts (very small slices are set to `NA` so they are not drawn).
+-   `pos`, `pos_single` — the vertical position of each label.
+-   `cvar`, `cvar_text` — the colour of the label, chosen for contrast against the bar.
+
+The `round_places` argument controls the number of decimals.
+
+```{r}
+tibble(yvar = c(5, 42, 0.3, 88)) |>
+  generate_textlabs()
+```
+
+## `impute_labs()` — labels from the codebook
+
+`impute_labs()` looks for a `codebook` object in the environment and joins its `title`, `subtitle`, `caption`, and `lab` columns onto the data by the `name` column. If no `codebook` is found, those columns are added as empty strings. Every `prep_*()` and `mean_*()` function calls it automatically, which is why prepared data already carries plot titles when a codebook is loaded.
+
+```{r}
+tibble(name = c("num1", "num2")) |>
+  impute_labs()
+```
+
+## `polish_var()` — wrap labels and append sample sizes
+
+`polish_var()` turns a "raw" category column (`var_origin`, by default `xvar_df`) into the final, plot-ready factor (`var_final`, by default `xvar`). It:
+
+-   converts the column to a factor while preserving the original order,
+-   optionally wraps long labels onto several lines (`wrap`, with `chrnum` characters per line),
+-   optionally appends the group size as `n = ...`, colour-coded by how reliable the size is (`nsize`).
+
+The `x_wrap` / `x_chrnum` / `x_nsize` (and `z_*`) arguments seen throughout this vignette are passed straight to `polish_var()`.
+
+```{r}
+tibble(
+  xvar_df = c("A very long faculty name that needs wrapping", "Short"),
+  nsize = c(15, 320)
+) |>
+  polish_var(chrnum = 20)
+```
+
+# Summary
+
+| Function | Output value (`yvar`) | Grouping | Typical plot |
+|---|---|---|---|
+| `prep_single()` | Percentage of one variable | none | `plot_bar()`, `plot_lolli()` |
+| `prep_gr()` | Percentage within a group | one | `plot_stack()`, `plot_dodge()` |
+| `prep_gr2()` | Percentage within a group | two (facet) | `plot_stack()` + facets |
+| `prep_mc()` | % choosing each option | none | `plot_bar()` |
+| `prep_mc_gr()` | % choosing each option | one | `plot_stack()`, `plot_dodge()` |
+| `prep_bat()` | % per response option | none | `plot_stack()` |
+| `prep_bat_gr()` | % per response option | one (facet) | `plot_stack()` + facets |
+| `mean_bat()` | Mean of numeric items | none | `plot_lolli()`, `plot_bar()` |
+| `mean_bat_gr()` | Mean within a group | one | `plot_dodge()`, `plot_lolli()` |
+| `mean_bat_gr2()` | Mean within a group | two (facet) | `plot_dodge()` + facets |
+
+In every case the workflow is the same: choose the preparation function that matches the variable type and the desired grouping, inspect or adjust the resulting tibble if needed, and pipe it into the matching `plot_*()` function. See the *UWB theme and colors* vignette for styling, and *Getting started with uwb* for the overall package overview and the `codebook` workflow.
