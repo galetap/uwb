@@ -5,5 +5,6 @@
 #' @import forcats
 #' @import stringr
 #' @importFrom magrittr %>%
+#' @importFrom readr parse_number
 #' @importFrom rlang :=
 NULL

@@ -12,3 +12,4 @@
 ^\.Rhistory$
 ^\.Rprofile$
 ^quarto-temp$
+^tests/README\.md$
