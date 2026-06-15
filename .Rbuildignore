@@ -10,3 +10,5 @@
 ^data-raw$
 ^\.git$
 ^\.Rhistory$
+^\.Rprofile$
+^quarto-temp$

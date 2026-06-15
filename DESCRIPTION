@@ -20,8 +20,14 @@ Imports:
     magrittr,
     purrr,
     rlang,
+    scales,
     stringr,
     tidyr
+Suggests: 
+    patchwork,
+    quarto,
+    tidyverse
+VignetteBuilder: quarto
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

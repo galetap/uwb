@@ -5,7 +5,7 @@
 \alias{codebook}
 \title{Example codebook}
 \format{
-A data frame with one row per variable in \link{data} and the following columns:
+A data frame with one row per variable in \link{example_data} and the following columns:
 \describe{
 \item{name}{Variable name as it appears in the dataset; used to match rows to plot data}
 \item{label}{Full variable label or question wording}
@@ -19,12 +19,12 @@ A data frame with one row per variable in \link{data} and the following columns:
 codebook
 }
 \description{
-A data frame providing plot labels for the \link{data} dataset. Used to
+A data frame providing plot labels for the \link{example_data} dataset. Used to
 demonstrate the codebook workflow in the \code{uwb} package: when a \code{codebook}
 object is present in the calling environment, the \verb{prep_*()} functions
 automatically import \code{title}, \code{subtitle}, \code{caption}, and \code{lab} from it.
 }
 \seealso{
-\link{data} for the matching survey dataset; \code{\link[=impute_labs]{impute_labs()}} for the function that reads from a codebook.
+\link{example_data} for the matching survey dataset; \code{\link[=impute_labs]{impute_labs()}} for the function that reads from a codebook.
 }
 \keyword{datasets}

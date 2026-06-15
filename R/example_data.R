@@ -16,4 +16,4 @@
 #'   \item{bat1, bat2, bat3, bat4, bat5}{Battery items with identical ordered response options (e.g. agree / neutral / disagree)}
 #' }
 #' @seealso [codebook] for matching plot labels; [prep_single()], [prep_bat()], [prep_mc()] for data preparation functions.
-"data"
+"example_data"
