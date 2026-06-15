@@ -1,25 +1,34 @@
-#' Grouped data prep - two levels of grouping
+#' Prepare the distribution of a categorical variable by two grouping variables
 #'
-#' grvar becomes xvar? grvar2 is macro grouping var for facets
-#' @param dat A data frame
-#' @param var A variable
-#' @param grvar The first grouped variable
-#' @param grvar2 The second grouped variable
-#' @param drop_na Drop NA or not?
-#' @param add_total Add total or not?
-#' @param lab_total DNK
-#' @param grvar_to_x DNK
-#' @param show_nsize DNK
-#' @param x_wrap DNK
-#' @param x_chrnum DNK
-#' @param z_wrap DNK
-#' @param z_chrnum DNK
+#' Extends [prep_gr()] with a second grouping variable. `grvar` becomes the
+#' category axis (`xvar`), `var` becomes the stacking variable (`zvar`), and
+#' `grvar2` is kept (as `zzvarno`) for use as a facet. Meant for [plot_stack()]
+#' with facets.
 #'
-#' @returns A tibble
+#' @param dat A data frame.
+#' @param var The categorical variable (unquoted column name).
+#' @param grvar The first grouping variable, placed on the category axis.
+#' @param grvar2 The second grouping variable, kept for faceting.
+#' @param drop_na Drop missing values of `var` before computing percentages?
+#'   Default `TRUE`.
+#' @param add_total Append a pseudo-group containing all respondents? Default
+#'   `FALSE`.
+#' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
+#' @param grvar_to_x Place `grvar` on the category axis (`xvar`) and `var` as the
+#'   secondary category (`zvar`)? Default `TRUE`; set `FALSE` to swap roles.
+#' @param show_nsize Append the group size (`n=`) to the category labels?
+#'   Default `TRUE`.
+#' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping `xvar` labels.
+#' @param z_wrap Wrap long `zvar` labels onto several lines? Default `TRUE`.
+#' @param z_chrnum Characters per line when wrapping `zvar` labels.
+#'
+#' @returns A tibble with `yvar` (percentage), `xvar`, `zvar`, `zzvarno` (facet),
+#'   and label columns.
 #' @export
 #'
 #' @examples
-#' prep_gr2(ggplot2::mpg, cyl, manufacturer, fl)
+#' prep_gr2(example_data, typ, fak, pohlavi)
 #'
 prep_gr2 <-
   function(dat, var, grvar, grvar2, drop_na = TRUE, add_total = FALSE,

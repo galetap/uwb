@@ -1,15 +1,18 @@
-#' Function to generate ribbon plot
+#' Ribbon (Sankey-bump) plot of group shares over time
 #'
-#'hide_lab = do not show labels of small bumps
-# One ribbon is a polygon with lots of border points to be smooth
-# xvar has to be a factor
-
-#' @param dat A data frame.
-#' @param space DNK
-#' @param fill DNK
-#' @param margin DNK
+#' Draws a smooth ribbon (Sankey-bump) plot from a prepared tibble, showing how
+#' the share of each group (`zvar`) evolves across the time axis (`xvar`). Each
+#' ribbon is labelled at its end. `xvar` must be a factor.
 #'
-#' @returns Plot.
+#' @param dat A prepared data frame. Must include the columns `xvar` (time,
+#'   factor), `yvar`, `zvar` (group), `labvar`, `title`, `subtitle`, `caption`.
+#' @param space Vertical space between ribbons. Default `5`.
+#' @param fill Vector of fill colours for the ribbons. Defaults to the `quali`
+#'   scale.
+#' @param margin Right-hand margin (and label wrapping width) reserved for the
+#'   ribbon-end annotations. Default `15`.
+#'
+#' @returns A ggplot object.
 #' @export
 #'
 plot_ribbon <-

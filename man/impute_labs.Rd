@@ -2,16 +2,24 @@
 % Please edit documentation in R/impute_labs.R
 \name{impute_labs}
 \alias{impute_labs}
-\title{Impute labs from codebook}
+\title{Import plot labels from the codebook}
 \usage{
 impute_labs(dat)
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame with a \code{name} column.}
 }
 \value{
-A data frame
+The input data frame with \code{title}, \code{subtitle}, \code{caption} (and \code{lab}
+when a codebook is present) columns added.
 }
 \description{
-Internal data prep functions (used in multiple data prep procedures)
+Auxiliary helper used by the \verb{prep_*()} and \verb{mean_*()} functions. Looks for a
+\code{codebook} object in the environment and joins its \code{title}, \code{subtitle},
+\code{caption}, and \code{lab} columns onto \code{dat} by the \code{name} column. If no \code{codebook}
+is found, those columns are added as empty strings.
+}
+\examples{
+impute_labs(data.frame(name = c("num1", "num2")))
+
 }

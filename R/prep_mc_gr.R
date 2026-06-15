@@ -1,23 +1,32 @@
-#' Grouped multiple choice data prep
+#' Prepare a multiple choice question by a grouping variable
 #'
-#' grvar becomes xvar
+#' Computes the selection percentages of [prep_mc()] within each level of
+#' `grvar`. The grouping variable goes on the category axis (`xvar`); the items
+#' become the secondary category (`zvar`). Meant for [plot_stack()] or
+#' [plot_dodge()].
 #'
-#' @param dat A data frame
-#' @param vars A variable
-#' @param grvar A grouping variable
-#' @param chosen A value
-#' @param drop_na Drop NA or not?
-#' @param add_total Add total or not?
-#' @param lab_total DNK
-#' @param x_wrap DNK
-#' @param x_chrnum DNK
-#' @param x_nsize DNK
+#' @param dat A data frame.
+#' @param vars The item columns to summarise. Defaults to all columns of `dat`.
+#' @param grvar The grouping variable (unquoted column name).
+#' @param chosen The value that counts as "selected" (e.g. `1` for 0/1 items).
+#' @param drop_na Drop missing values before computing percentages? Default
+#'   `TRUE`.
+#' @param add_total Append an overall column (all respondents) for comparison?
+#'   Default `FALSE`.
+#' @param lab_total Label of the total column. Default `"ZCU"`.
+#' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping `xvar` labels.
+#' @param x_nsize Append the group size (`n=`) to the category labels? Default
+#'   `TRUE`.
 #'
-#' @returns A tibble
+#' @returns A tibble with `yvar` (percentage choosing each item within group),
+#'   `xvar`, `zvar`, and label columns.
 #' @export
 #'
 #' @examples
-#' "DNK"
+#' prep_mc_gr(example_data,
+#'            vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
+#'            grvar = fak, chosen = 1)
 #'
 prep_mc_gr <- function(
     dat, vars = names(dat), grvar, chosen,  drop_na = TRUE,

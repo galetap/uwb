@@ -1,20 +1,26 @@
-#' Multiple choice data prep
+#' Prepare the distribution of a multiple choice question
 #'
-#' (= batttery with 2 options: chosen vs. not chosen)
-#' @param dat A data frame
-#' @param vars Variables
-#' @param chosen DNK
-#' @param drop_na Drop NA or not?
-#' @param order Order results or not?
-#' @param x_wrap DNK
-#' @param x_chrnum DNK
-#' @param x_nsize DNK
+#' Summarises a block of multiple choice items (one column per option, usually
+#' 0/1 coded). For each item it reports the share of respondents whose value
+#' equals `chosen`. With 0/1 items, `chosen = 1` gives the percentage who chose
+#' each option. Meant for [plot_bar()].
 #'
-#' @returns A tibble
+#' @param dat A data frame.
+#' @param vars The item columns to summarise. Defaults to all columns of `dat`.
+#' @param chosen The value that counts as "selected" (e.g. `1` for 0/1 items).
+#' @param drop_na Drop missing values before computing percentages? Default
+#'   `TRUE`.
+#' @param order Reorder items by frequency? Default `FALSE`.
+#' @param x_wrap Wrap long item labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping item labels.
+#' @param x_nsize Append the sample size (`n=`) to item labels? Default `TRUE`.
+#'
+#' @returns A tibble with one row per item (`yvar` = percentage choosing it,
+#'   `xvar` = item label, plus label columns).
 #' @export
 #'
 #' @examples
-#' prep_mc(ggplot2::mpg |> dplyr::select(manufacturer), chosen = "audi")
+#' prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), chosen = 1)
 #'
 prep_mc  <- function(
     dat, vars = names(dat), chosen, drop_na = TRUE, order = FALSE,

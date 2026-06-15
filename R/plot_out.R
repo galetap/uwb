@@ -1,19 +1,29 @@
-#' Plot points: total value + groups with highlighted outliers (jittered)
-#' Default color scheme is faks because this is the most common use case
-#' Data has to be grouped in order to compute differences from the main trend, the default grouping is by xvar
-#' Data has to include groups + total
+#' Point chart highlighting groups with extreme values
 #'
-#' @param dat A data frame.
-#' @param horiz TRUE for horinzontal plot, FALSE for vertical plot.
-#' @param total DNK
-#' @param c_total DNK
-#' @param add_line TRUE is for trends, it adds a trend line
-#' @param out DNK
-#' @param jitter_w DNK
-#' @param alpha_shadow DNK
-#' @param seed Random seed number.
+#' Plots the total value per category together with the individual groups,
+#' jittered around each category. Groups whose value differs from the total by
+#' more than `out` are highlighted (and labelled); the others are drawn as faint
+#' shadow points. The prepared data must contain both the groups and a total
+#' (e.g. via `add_total = TRUE` in [prep_gr()] or [mean_bat_gr()]). The default
+#' colour scheme is `faks`.
 #'
-#' @returns Plot
+#' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
+#'   `zvar`, `zvar_df`, `labvar_full`, `title`, `subtitle`, `caption`.
+#' @param horiz `TRUE` for a horizontal chart, `FALSE` for a vertical chart
+#'   (default).
+#' @param total Label of the total group (level of `zvar_df`). Default `"ZCU"`.
+#' @param c_total Colour of the total point/line. Defaults to the last `faks`
+#'   colour.
+#' @param add_line Add a line connecting the total values (for trends)? Default
+#'   `TRUE`.
+#' @param out Threshold: groups differing from the total by more than this are
+#'   highlighted as outliers.
+#' @param jitter_w Horizontal jitter width for the group points. Default `0.3`.
+#' @param alpha_shadow Transparency of the non-highlighted shadow points.
+#'   Default `0.15`.
+#' @param seed Random seed for reproducible jitter. Default `123456`.
+#'
+#' @returns A ggplot object.
 #' @export
 #'
 plot_out  <-

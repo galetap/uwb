@@ -2,7 +2,7 @@
 % Please edit documentation in R/mean_bat_gr2.R
 \name{mean_bat_gr2}
 \alias{mean_bat_gr2}
-\title{Means of a battery, grouped by two variables}
+\title{Mean scores of a battery by two grouping variables}
 \usage{
 mean_bat_gr2(
   dat,
@@ -14,21 +14,31 @@ mean_bat_gr2(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{vars}{A variable}
+\item{vars}{The numeric item columns.}
 
-\item{grvar}{The first grouping variable}
+\item{grvar}{The first grouping variable, placed on the category axis.}
 
-\item{grvar2}{The second grouping variable}
+\item{grvar2}{The second grouping variable, used as the secondary category.}
 
-\item{round_places}{Rounding number}
+\item{round_places}{Number of decimals used for the rounded label. Default
+\code{0}.}
 
-\item{na_lab}{DNK}
+\item{na_lab}{Character values to treat as missing when parsing numbers.
+Default \code{c("NA", "Bez odpovedi")}.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (mean), \code{xvar}, \code{zvar}, and label columns.
 }
 \description{
-Means of a battery, grouped by two variables
+Computes item means for every combination of two grouping variables. The
+first grouping variable (\code{grvar}) becomes \code{xvar} and the second (\code{grvar2})
+becomes \code{zvar}. Meant for \code{\link[=plot_dodge]{plot_dodge()}} with facets.
+}
+\examples{
+mean_bat_gr2(example_data,
+             vars = c("num1", "num2", "num3", "num4", "num5"),
+             grvar = fak, grvar2 = pohlavi)
+
 }

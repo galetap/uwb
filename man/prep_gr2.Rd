@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_gr2.R
 \name{prep_gr2}
 \alias{prep_gr2}
-\title{Grouped data prep - two levels of grouping}
+\title{Prepare the distribution of a categorical variable by two grouping variables}
 \usage{
 prep_gr2(
   dat,
@@ -21,39 +21,47 @@ prep_gr2(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{var}{A variable}
+\item{var}{The categorical variable (unquoted column name).}
 
-\item{grvar}{The first grouped variable}
+\item{grvar}{The first grouping variable, placed on the category axis.}
 
-\item{grvar2}{The second grouped variable}
+\item{grvar2}{The second grouping variable, kept for faceting.}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing values of \code{var} before computing percentages?
+Default \code{TRUE}.}
 
-\item{add_total}{Add total or not?}
+\item{add_total}{Append a pseudo-group containing all respondents? Default
+\code{FALSE}.}
 
-\item{lab_total}{DNK}
+\item{lab_total}{Label of the total pseudo-group. Default \code{"ZCU"}.}
 
-\item{grvar_to_x}{DNK}
+\item{grvar_to_x}{Place \code{grvar} on the category axis (\code{xvar}) and \code{var} as the
+secondary category (\code{zvar})? Default \code{TRUE}; set \code{FALSE} to swap roles.}
 
-\item{show_nsize}{DNK}
+\item{show_nsize}{Append the group size (\verb{n=}) to the category labels?
+Default \code{TRUE}.}
 
-\item{x_wrap}{DNK}
+\item{x_wrap}{Wrap long \code{xvar} labels onto several lines? Default \code{TRUE}.}
 
-\item{x_chrnum}{DNK}
+\item{x_chrnum}{Characters per line when wrapping \code{xvar} labels.}
 
-\item{z_wrap}{DNK}
+\item{z_wrap}{Wrap long \code{zvar} labels onto several lines? Default \code{TRUE}.}
 
-\item{z_chrnum}{DNK}
+\item{z_chrnum}{Characters per line when wrapping \code{zvar} labels.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (percentage), \code{xvar}, \code{zvar}, \code{zzvarno} (facet),
+and label columns.
 }
 \description{
-grvar becomes xvar? grvar2 is macro grouping var for facets
+Extends \code{\link[=prep_gr]{prep_gr()}} with a second grouping variable. \code{grvar} becomes the
+category axis (\code{xvar}), \code{var} becomes the stacking variable (\code{zvar}), and
+\code{grvar2} is kept (as \code{zzvarno}) for use as a facet. Meant for \code{\link[=plot_stack]{plot_stack()}}
+with facets.
 }
 \examples{
-prep_gr2(ggplot2::mpg, cyl, manufacturer, fl)
+prep_gr2(example_data, typ, fak, pohlavi)
 
 }

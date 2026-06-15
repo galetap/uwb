@@ -2,18 +2,27 @@
 % Please edit documentation in R/generate_textlabs.R
 \name{generate_textlabs}
 \alias{generate_textlabs}
-\title{Generate vars to be used for geom_text}
+\title{Add text-label columns for plotting}
 \usage{
 generate_textlabs(dat, round_places = 0)
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame containing a \code{yvar} column.}
 
-\item{round_places}{Number of decimals}
+\item{round_places}{Number of decimals for the rounded labels. Default \code{0}.}
 }
 \value{
-A data frame
+The input data frame with the added text-label columns.
 }
 \description{
-Generate vars to be used for geom_text
+Auxiliary helper used by the \verb{prep_*()} and \verb{mean_*()} functions. Takes a data
+frame with a \code{yvar} column and adds the columns used by \code{geom_text()} in the
+plot functions: \code{labvar_full} (rounded value), \code{labvar_single} (label for
+single-series bars, small values shown as \code{"<1"}), \code{labvar} (label for
+stacked/dodged charts, tiny slices set to \code{NA}), \code{pos} / \code{pos_single} (label
+positions), and \code{cvar} / \code{cvar_text} (label colours for contrast).
+}
+\examples{
+generate_textlabs(data.frame(yvar = c(5, 42, 0.3, 88)))
+
 }

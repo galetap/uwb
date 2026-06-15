@@ -1,14 +1,25 @@
-#' Means of a battery, grouped by two variables
+#' Mean scores of a battery by two grouping variables
 #'
-#' @param dat A data frame
-#' @param vars A variable
-#' @param grvar The first grouping variable
-#' @param grvar2 The second grouping variable
-#' @param round_places Rounding number
-#' @param na_lab DNK
+#' Computes item means for every combination of two grouping variables. The
+#' first grouping variable (`grvar`) becomes `xvar` and the second (`grvar2`)
+#' becomes `zvar`. Meant for [plot_dodge()] with facets.
 #'
-#' @returns A tibble
+#' @param dat A data frame.
+#' @param vars The numeric item columns.
+#' @param grvar The first grouping variable, placed on the category axis.
+#' @param grvar2 The second grouping variable, used as the secondary category.
+#' @param round_places Number of decimals used for the rounded label. Default
+#'   `0`.
+#' @param na_lab Character values to treat as missing when parsing numbers.
+#'   Default `c("NA", "Bez odpovedi")`.
+#'
+#' @returns A tibble with `yvar` (mean), `xvar`, `zvar`, and label columns.
 #' @export
+#'
+#' @examples
+#' mean_bat_gr2(example_data,
+#'              vars = c("num1", "num2", "num3", "num4", "num5"),
+#'              grvar = fak, grvar2 = pohlavi)
 #'
 mean_bat_gr2  <-
   function(dat, vars, grvar, grvar2, round_places = 0,

@@ -2,10 +2,7 @@
 % Please edit documentation in R/plot_out.R
 \name{plot_out}
 \alias{plot_out}
-\title{Plot points: total value + groups with highlighted outliers (jittered)
-Default color scheme is faks because this is the most common use case
-Data has to be grouped in order to compute differences from the main trend, the default grouping is by xvar
-Data has to include groups + total}
+\title{Point chart highlighting groups with extreme values}
 \usage{
 plot_out(
   dat,
@@ -20,30 +17,38 @@ plot_out(
 )
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar}, \code{yvar},
+\code{zvar}, \code{zvar_df}, \code{labvar_full}, \code{title}, \code{subtitle}, \code{caption}.}
 
-\item{horiz}{TRUE for horinzontal plot, FALSE for vertical plot.}
+\item{horiz}{\code{TRUE} for a horizontal chart, \code{FALSE} for a vertical chart
+(default).}
 
-\item{total}{DNK}
+\item{total}{Label of the total group (level of \code{zvar_df}). Default \code{"ZCU"}.}
 
-\item{c_total}{DNK}
+\item{c_total}{Colour of the total point/line. Defaults to the last \code{faks}
+colour.}
 
-\item{add_line}{TRUE is for trends, it adds a trend line}
+\item{add_line}{Add a line connecting the total values (for trends)? Default
+\code{TRUE}.}
 
-\item{out}{DNK}
+\item{out}{Threshold: groups differing from the total by more than this are
+highlighted as outliers.}
 
-\item{jitter_w}{DNK}
+\item{jitter_w}{Horizontal jitter width for the group points. Default \code{0.3}.}
 
-\item{alpha_shadow}{DNK}
+\item{alpha_shadow}{Transparency of the non-highlighted shadow points.
+Default \code{0.15}.}
 
-\item{seed}{Random seed number.}
+\item{seed}{Random seed for reproducible jitter. Default \code{123456}.}
 }
 \value{
-Plot
+A ggplot object.
 }
 \description{
-Plot points: total value + groups with highlighted outliers (jittered)
-Default color scheme is faks because this is the most common use case
-Data has to be grouped in order to compute differences from the main trend, the default grouping is by xvar
-Data has to include groups + total
+Plots the total value per category together with the individual groups,
+jittered around each category. Groups whose value differs from the total by
+more than \code{out} are highlighted (and labelled); the others are drawn as faint
+shadow points. The prepared data must contain both the groups and a total
+(e.g. via \code{add_total = TRUE} in \code{\link[=prep_gr]{prep_gr()}} or \code{\link[=mean_bat_gr]{mean_bat_gr()}}). The default
+colour scheme is \code{faks}.
 }

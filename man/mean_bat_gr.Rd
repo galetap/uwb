@@ -2,7 +2,7 @@
 % Please edit documentation in R/mean_bat_gr.R
 \name{mean_bat_gr}
 \alias{mean_bat_gr}
-\title{Means of a battery, grouped}
+\title{Mean scores of a battery by one grouping variable}
 \usage{
 mean_bat_gr(
   dat,
@@ -15,23 +15,36 @@ mean_bat_gr(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{vars}{A variable}
+\item{vars}{The numeric item columns.}
 
-\item{grvar}{A grouping variable}
+\item{grvar}{The grouping variable (unquoted column name).}
 
-\item{round_places}{Rounding number}
+\item{round_places}{Number of decimals used for the rounded label. Default
+\code{0}.}
 
-\item{add_total}{DNK}
+\item{add_total}{Append an overall group for comparison against the total?
+Default \code{FALSE}.}
 
-\item{lab_total}{DNK}
+\item{lab_total}{Label of the total group. Default \code{"ZCU"}.}
 
-\item{na_lab}{DNK}
+\item{na_lab}{Character values to treat as missing when parsing numbers.
+Default \code{c("NA", "Bez odpovedi")}.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (mean within group), \code{xvar}, \code{zvar}, and label
+columns.
 }
 \description{
-Means of a battery, grouped
+Computes item means within each level of \code{grvar}. The grouping variable
+becomes the category axis (\code{xvar}, with \verb{n=} appended) and the item name
+becomes the secondary category (\code{zvar}). Meant for \code{\link[=plot_dodge]{plot_dodge()}} or
+\code{\link[=plot_lolli]{plot_lolli()}}.
+}
+\examples{
+mean_bat_gr(example_data,
+            vars = c("num1", "num2", "num3", "num4", "num5"),
+            grvar = fak)
+
 }

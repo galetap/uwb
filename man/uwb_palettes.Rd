@@ -2,7 +2,7 @@
 % Please edit documentation in R/uwb_palettes.R
 \name{uwb_palettes}
 \alias{uwb_palettes}
-\title{Create a uwb pallete}
+\title{Build a UWB color palette}
 \usage{
 uwb_palettes(
   name = "quali",
@@ -13,21 +13,34 @@ uwb_palettes(
 )
 }
 \arguments{
-\item{name}{A name of the palette}
+\item{name}{Name of the palette (an element of \code{all_palettes}). Default
+\code{"quali"}.}
 
-\item{n}{Number of colors}
+\item{n}{Number of colors. If omitted, the full palette is used (minus one
+when \code{add_na = TRUE}).}
 
-\item{all_palettes}{DNK}
+\item{all_palettes}{List of available palettes. Defaults to the built-in
+\code{uwb_scales}.}
 
-\item{type}{discrete or continuous}
+\item{type}{\code{"discrete"} to take the first \code{n} colors as-is, or
+\code{"continuous"} to interpolate \code{n} colors across the palette.}
 
-\item{add_na}{Add color for unknown category?}
+\item{add_na}{Append an extra color for an unknown/NA category? Default
+\code{FALSE}.}
+}
+\value{
+A character vector of hex colors (of class \code{"palette"}).
 }
 \description{
-create a palette from the provided colors (from the list uwb_scales)
+Creates a vector of colors from one of the built-in UWB color scales (see
+\link{uwb_scales}). Used internally by \code{\link[=scale_fill_uwb]{scale_fill_uwb()}} and \code{\link[=scale_color_uwb]{scale_color_uwb()}},
+but can also be called directly to build custom color sequences.
 }
 \examples{
 uwb_palettes(name = "quali", n = 3, type = "discrete")
 uwb_palettes(n = 5, add_na = TRUE)
 
+}
+\seealso{
+\code{\link[=scale_fill_uwb]{scale_fill_uwb()}}, \code{\link[=scale_color_uwb]{scale_color_uwb()}}, \link{uwb_scales}
 }

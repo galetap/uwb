@@ -1,11 +1,19 @@
-#' Barplot of a single categorical variable
+#' Bar chart of a single categorical variable
 #'
-#' @param dat A data frame to plot.
-#' It has to include columns named: xvar, yvar, labvar (text labels for yvar), cvar(fill color), title, subtitle, caption.
-#' @param horiz TRUE for horinzontal plot, FALSE for vertical plot.
+#' Draws a bar chart from a prepared tibble, typically the output of
+#' [prep_single()], [prep_mc()] or [mean_bat()].
 #'
-#' @returns Plot
+#' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
+#'   `labvar_single`, `cvar`, `cvar_text`, `pos_single`, `title`, `subtitle`,
+#'   `caption`.
+#' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
+#'   chart.
+#'
+#' @returns A ggplot object (also printed).
 #' @export
+#'
+#' @examples
+#' prep_single(example_data, fak) |> plot_bar()
 #'
 plot_bar  <-
   function(dat, horiz = TRUE){

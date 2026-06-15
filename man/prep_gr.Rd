@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_gr.R
 \name{prep_gr}
 \alias{prep_gr}
-\title{Grouped data prep with or without total}
+\title{Prepare the distribution of a categorical variable by one grouping variable}
 \usage{
 prep_gr(
   dat,
@@ -20,37 +20,45 @@ prep_gr(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{var}{A variable}
+\item{var}{The categorical variable (unquoted column name).}
 
-\item{grvar}{A group variable}
+\item{grvar}{The grouping variable (unquoted column name).}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing values of \code{var} before computing percentages?
+Default \code{TRUE}.}
 
-\item{add_total}{T/F}
+\item{add_total}{Append a pseudo-group containing all respondents for
+comparison against the total? Default \code{FALSE}.}
 
-\item{lab_total}{DNK}
+\item{lab_total}{Label of the total pseudo-group. Default \code{"ZCU"}.}
 
-\item{grvar_to_x}{DNK}
+\item{grvar_to_x}{Place \code{grvar} on the category axis (\code{xvar}) and \code{var} as the
+secondary category (\code{zvar})? Default \code{TRUE}; set \code{FALSE} to swap roles.}
 
-\item{show_nsize}{DNK}
+\item{show_nsize}{Append the group size (\verb{n=}) to the category labels?
+Default \code{TRUE}.}
 
-\item{x_wrap}{DNK}
+\item{x_wrap}{Wrap long \code{xvar} labels onto several lines? Default \code{TRUE}.}
 
-\item{x_chrnum}{DNK}
+\item{x_chrnum}{Characters per line when wrapping \code{xvar} labels.}
 
-\item{z_wrap}{DNK}
+\item{z_wrap}{Wrap long \code{zvar} labels onto several lines? Default \code{TRUE}.}
 
-\item{z_chrnum}{DNK}
+\item{z_chrnum}{Characters per line when wrapping \code{zvar} labels.}
 }
 \value{
-A data frame
+A tibble with \code{yvar} (percentage within group), \code{xvar}, \code{zvar}, and
+label columns.
 }
 \description{
-var becomes zvar, grvar becomes xvar, it can be switched by grvar_to_x = FALSE
+Computes the distribution (in percent) of \code{var} within each level of
+\code{grvar}; percentages sum to 100\% inside each group. The result is meant for
+\code{\link[=plot_stack]{plot_stack()}} or \code{\link[=plot_dodge]{plot_dodge()}}.
 }
 \examples{
-prep_gr(ggplot2::mpg, class, cyl)
+prep_gr(example_data, typ, fak)
+prep_gr(example_data, typ, fak, add_total = TRUE)
 
 }

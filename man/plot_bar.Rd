@@ -2,19 +2,26 @@
 % Please edit documentation in R/plot_bar.R
 \name{plot_bar}
 \alias{plot_bar}
-\title{Barplot of a single categorical variable}
+\title{Bar chart of a single categorical variable}
 \usage{
 plot_bar(dat, horiz = TRUE)
 }
 \arguments{
-\item{dat}{A data frame to plot.
-It has to include columns named: xvar, yvar, labvar (text labels for yvar), cvar(fill color), title, subtitle, caption.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar}, \code{yvar},
+\code{labvar_single}, \code{cvar}, \code{cvar_text}, \code{pos_single}, \code{title}, \code{subtitle},
+\code{caption}.}
 
-\item{horiz}{TRUE for horinzontal plot, FALSE for vertical plot.}
+\item{horiz}{\code{TRUE} for a horizontal chart (default), \code{FALSE} for a vertical
+chart.}
 }
 \value{
-Plot
+A ggplot object (also printed).
 }
 \description{
-Barplot of a single categorical variable
+Draws a bar chart from a prepared tibble, typically the output of
+\code{\link[=prep_single]{prep_single()}}, \code{\link[=prep_mc]{prep_mc()}} or \code{\link[=mean_bat]{mean_bat()}}.
+}
+\examples{
+prep_single(example_data, fak) |> plot_bar()
+
 }

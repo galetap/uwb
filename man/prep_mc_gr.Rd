@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_mc_gr.R
 \name{prep_mc_gr}
 \alias{prep_mc_gr}
-\title{Grouped multiple choice data prep}
+\title{Prepare a multiple choice question by a grouping variable}
 \usage{
 prep_mc_gr(
   dat,
@@ -18,33 +18,42 @@ prep_mc_gr(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{vars}{A variable}
+\item{vars}{The item columns to summarise. Defaults to all columns of \code{dat}.}
 
-\item{grvar}{A grouping variable}
+\item{grvar}{The grouping variable (unquoted column name).}
 
-\item{chosen}{A value}
+\item{chosen}{The value that counts as "selected" (e.g. \code{1} for 0/1 items).}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing values before computing percentages? Default
+\code{TRUE}.}
 
-\item{add_total}{Add total or not?}
+\item{add_total}{Append an overall column (all respondents) for comparison?
+Default \code{FALSE}.}
 
-\item{lab_total}{DNK}
+\item{lab_total}{Label of the total column. Default \code{"ZCU"}.}
 
-\item{x_wrap}{DNK}
+\item{x_wrap}{Wrap long \code{xvar} labels onto several lines? Default \code{TRUE}.}
 
-\item{x_chrnum}{DNK}
+\item{x_chrnum}{Characters per line when wrapping \code{xvar} labels.}
 
-\item{x_nsize}{DNK}
+\item{x_nsize}{Append the group size (\verb{n=}) to the category labels? Default
+\code{TRUE}.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (percentage choosing each item within group),
+\code{xvar}, \code{zvar}, and label columns.
 }
 \description{
-grvar becomes xvar
+Computes the selection percentages of \code{\link[=prep_mc]{prep_mc()}} within each level of
+\code{grvar}. The grouping variable goes on the category axis (\code{xvar}); the items
+become the secondary category (\code{zvar}). Meant for \code{\link[=plot_stack]{plot_stack()}} or
+\code{\link[=plot_dodge]{plot_dodge()}}.
 }
 \examples{
-"DNK"
+prep_mc_gr(example_data,
+           vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
+           grvar = fak, chosen = 1)
 
 }

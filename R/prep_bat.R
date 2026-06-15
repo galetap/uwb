@@ -1,16 +1,24 @@
-#' Batteries data prep
+#' Prepare the distribution of a battery of items
 #'
-#' Dat is wide data, it is pivoted longer inside the function
+#' A battery is a block of items sharing the same (usually ordered) response
+#' scale. For each item this computes the percentage falling into each response
+#' category: the item name becomes `xvar` and the response value becomes `zvar`.
+#' Meant for [plot_stack()] (one stacked bar per item).
 #'
-#' @param dat A data frame in a wide format
-#' @param vars A variable
-#' @param drop_na Drop NA or not?
-#' @param x_wrap DNK
-#' @param x_chrnum DNK
-#' @param x_nsize DNK
+#' @param dat A data frame in wide format (one column per item).
+#' @param vars The battery item columns. Defaults to all columns of `dat`.
+#' @param drop_na Drop missing answers before computing percentages? Default
+#'   `TRUE`.
+#' @param x_wrap Wrap long item labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping item labels.
+#' @param x_nsize Append the sample size (`n=`) to item labels? Default `FALSE`.
 #'
-#' @returns A tibble
+#' @returns A tibble with `yvar` (percentage per response option), `xvar` (item),
+#'   `zvar` (response value), and label columns.
 #' @export
+#'
+#' @examples
+#' prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
 #'
 prep_bat  <-
   function(dat, vars = names(dat), drop_na = TRUE,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_mc.R
 \name{prep_mc}
 \alias{prep_mc}
-\title{Multiple choice data prep}
+\title{Prepare the distribution of a multiple choice question}
 \usage{
 prep_mc(
   dat,
@@ -16,29 +16,34 @@ prep_mc(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{vars}{Variables}
+\item{vars}{The item columns to summarise. Defaults to all columns of \code{dat}.}
 
-\item{chosen}{DNK}
+\item{chosen}{The value that counts as "selected" (e.g. \code{1} for 0/1 items).}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing values before computing percentages? Default
+\code{TRUE}.}
 
-\item{order}{Order results or not?}
+\item{order}{Reorder items by frequency? Default \code{FALSE}.}
 
-\item{x_wrap}{DNK}
+\item{x_wrap}{Wrap long item labels onto several lines? Default \code{TRUE}.}
 
-\item{x_chrnum}{DNK}
+\item{x_chrnum}{Characters per line when wrapping item labels.}
 
-\item{x_nsize}{DNK}
+\item{x_nsize}{Append the sample size (\verb{n=}) to item labels? Default \code{TRUE}.}
 }
 \value{
-A tibble
+A tibble with one row per item (\code{yvar} = percentage choosing it,
+\code{xvar} = item label, plus label columns).
 }
 \description{
-(= batttery with 2 options: chosen vs. not chosen)
+Summarises a block of multiple choice items (one column per option, usually
+0/1 coded). For each item it reports the share of respondents whose value
+equals \code{chosen}. With 0/1 items, \code{chosen = 1} gives the percentage who chose
+each option. Meant for \code{\link[=plot_bar]{plot_bar()}}.
 }
 \examples{
-prep_mc(ggplot2::mpg |> dplyr::select(manufacturer), chosen = "audi")
+prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), chosen = 1)
 
 }

@@ -1,11 +1,16 @@
-#' Plot trend by a grouping var
+#' Trend plot for several groups
 #'
-#' xvar is the time var, zvar is the groups var
-#' @param dat A data frame.
-#' @param total DNK
-#' @param add_points DNL
+#' Draws a multi-line trend plot from a prepared tibble: the category axis
+#' (`xvar`) is the time variable and `zvar` defines the groups (one line each).
 #'
-#' @returns Plot.
+#' @param dat A prepared data frame. Must include the columns `xvar` (time),
+#'   `yvar`, `zvar` (group), `labvar_full`, `title`, `subtitle`, `caption`.
+#' @param total Optional name of the group (level of `zvar`) to emphasise with
+#'   larger points (e.g. the overall total).
+#' @param add_points Add points and value labels on top of the lines? Default
+#'   `TRUE`.
+#'
+#' @returns A ggplot object.
 #' @export
 #'
 plot_trend_gr  <-

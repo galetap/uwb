@@ -1,12 +1,22 @@
-#' Create a uwb pallete
+#' Build a UWB color palette
 #'
-#'create a palette from the provided colors (from the list uwb_scales)
-#' @param name A name of the palette
-#' @param n Number of colors
-#' @param all_palettes DNK
-#' @param type discrete or continuous
-#' @param add_na Add color for unknown category?
+#' Creates a vector of colors from one of the built-in UWB color scales (see
+#' [uwb_scales]). Used internally by [scale_fill_uwb()] and [scale_color_uwb()],
+#' but can also be called directly to build custom color sequences.
 #'
+#' @param name Name of the palette (an element of `all_palettes`). Default
+#'   `"quali"`.
+#' @param n Number of colors. If omitted, the full palette is used (minus one
+#'   when `add_na = TRUE`).
+#' @param all_palettes List of available palettes. Defaults to the built-in
+#'   `uwb_scales`.
+#' @param type `"discrete"` to take the first `n` colors as-is, or
+#'   `"continuous"` to interpolate `n` colors across the palette.
+#' @param add_na Append an extra color for an unknown/NA category? Default
+#'   `FALSE`.
+#'
+#' @returns A character vector of hex colors (of class `"palette"`).
+#' @seealso [scale_fill_uwb()], [scale_color_uwb()], [uwb_scales]
 #' @export
 #'
 #' @examples

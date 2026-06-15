@@ -2,26 +2,30 @@
 % Please edit documentation in R/prep_single.R
 \name{prep_single}
 \alias{prep_single}
-\title{Prepare percentage data of single var}
+\title{Prepare the distribution of a single categorical variable}
 \usage{
 prep_single(dat, var, order = FALSE, drop_na = TRUE)
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{var}{A variable}
+\item{var}{The categorical variable (unquoted column name).}
 
-\item{order}{Should the results be ordered?}
+\item{order}{Reorder categories by frequency (largest first)? Default \code{FALSE}.}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing values of \code{var} before computing percentages?
+Default \code{TRUE}.}
 }
 \value{
-A tibble with enhanced frequency table
+A tibble with one row per category (\code{yvar} = percentage, \code{n} = count,
+\code{xvar} = plot-ready factor, plus label columns).
 }
 \description{
-Prepare percentage data of single var
+Computes the distribution (in percent) of one categorical variable and
+returns a plot-ready tibble for \code{\link[=plot_bar]{plot_bar()}} or \code{\link[=plot_lolli]{plot_lolli()}}.
 }
 \examples{
-prep_single(ggplot2::mpg, cyl)
+prep_single(example_data, fak)
+prep_single(example_data, fak, order = TRUE)
 
 }

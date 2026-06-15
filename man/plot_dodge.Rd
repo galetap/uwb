@@ -2,18 +2,27 @@
 % Please edit documentation in R/plot_dodge.R
 \name{plot_dodge}
 \alias{plot_dodge}
-\title{Plot dodge percentages by groupvar}
+\title{Dodge (side-by-side) bar chart for grouped data}
 \usage{
 plot_dodge(dat, horiz = TRUE)
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar}, \code{yvar},
+\code{zvar}, \code{labvar}, \code{labvar_single}, \code{pos_single}, \code{title}, \code{subtitle},
+\code{caption}.}
 
-\item{horiz}{TRUE for horinzontal plot, FALSE for vertical plot.}
+\item{horiz}{\code{TRUE} for a horizontal chart (default), \code{FALSE} for a vertical
+chart.}
 }
 \value{
-Plot.
+A ggplot object (also printed).
 }
 \description{
-Plot dodge percentages by groupvar
+Draws side-by-side bars from a prepared tibble, typically the output of
+\code{\link[=prep_gr]{prep_gr()}}, \code{\link[=prep_mc_gr]{prep_mc_gr()}} or \code{\link[=mean_bat_gr]{mean_bat_gr()}}. Bars are grouped and coloured
+by \code{zvar}.
+}
+\examples{
+prep_gr(example_data, typ, fak) |> plot_dodge()
+
 }

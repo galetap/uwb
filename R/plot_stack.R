@@ -1,10 +1,19 @@
-#' Plot stacked percentages by groupvar
+#' Stacked bar chart for grouped data
 #'
-#' @param dat A data frame.
-#' @param horiz TRUE for horinzontal plot, FALSE for vertical plot.
+#' Draws one stacked bar per category from a prepared tibble, typically the
+#' output of [prep_gr()], [prep_bat()] or [prep_mc_gr()]. Bars are coloured by
+#' `zvar` and stack to 100%.
 #'
-#' @returns Plot.
+#' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
+#'   `zvar`, `labvar`, `pos`, `title`, `subtitle`, `caption`.
+#' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
+#'   chart.
+#'
+#' @returns A ggplot object (also printed).
 #' @export
+#'
+#' @examples
+#' prep_gr(example_data, typ, fak, add_total = TRUE) |> plot_stack()
 #'
 plot_stack  <-
   function(dat, horiz = TRUE){

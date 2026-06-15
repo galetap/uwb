@@ -1,20 +1,31 @@
-#' Generate final version xvar or zvar to be used in plots
+#' Build the final plot-ready category factor
 #'
-#'It allows wrapping long text and addding nsize info
-#'result_name:
-#'xvar_df/zvar = default, basic text version as found in the data set
-#'xzvar_nr = helper var with level number, to be used for reordering the modified version, removed
-#'xvar/zvar = final version that goes to the plot (wrapped or not, with or without nsize)
-
-#' @param dat A data frame
-#' @param var_origin DNK
-#' @param var_final DNK
-#' @param wrap DNK
-#' @param chrnum DNK
-#' @param nsize DNK
+#' Auxiliary helper used by the `prep_*()` functions. Turns a "raw" category
+#' column (`var_origin`) into the final plot-ready factor (`var_final`): it
+#' converts the column to a factor preserving the original order, optionally
+#' wraps long labels onto several lines, and optionally appends the group size
+#' as `n = ...`, colour-coded by how reliable the size is.
 #'
-#' @returns DNK
+#' @param dat A data frame (optionally containing an `nsize` column).
+#' @param var_origin Name of the raw category column. Default `"xvar_df"`.
+#' @param var_final Name of the resulting plot-ready factor column. Default
+#'   `"xvar"`.
+#' @param wrap Wrap long labels onto several lines? Default `TRUE`.
+#' @param chrnum Characters per line when wrapping labels.
+#' @param nsize Append the group size (`n = ...`) to each label, colour-coded by
+#'   reliability? Default `TRUE`.
+#'
+#' @returns The input data frame with the `var_final` factor column added.
 #' @export
+#'
+#' @examples
+#' polish_var(
+#'   data.frame(
+#'     xvar_df = c("A very long faculty name that needs wrapping", "Short"),
+#'     nsize = c(15, 320)
+#'   ),
+#'   chrnum = 20
+#' )
 #'
 polish_var <- function(dat, var_origin = "xvar_df", var_final = "xvar",
                        wrap = TRUE, chrnum = .uwb_vals$chrnum, nsize = TRUE){

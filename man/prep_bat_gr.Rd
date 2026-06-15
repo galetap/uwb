@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_bat_gr.R
 \name{prep_bat_gr}
 \alias{prep_bat_gr}
-\title{Grouped battery data prep}
+\title{Prepare the distribution of a battery of items by a grouping variable}
 \usage{
 prep_bat_gr(
   dat,
@@ -13,19 +13,29 @@ prep_bat_gr(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame in wide format (one column per item).}
 
-\item{vars}{A variable}
+\item{vars}{The battery item columns. Defaults to all columns of \code{dat}.}
 
-\item{grvar}{A grouping variable}
+\item{grvar}{The grouping variable (unquoted column name).}
 
-\item{add_total}{DNK}
+\item{add_total}{Append an overall ("ZCU") group for comparison? Default
+\code{FALSE}.}
 
-\item{lab_total}{DNK}
+\item{lab_total}{Label of the total group. Default \code{"ZCU"}.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (percentage per response option), \code{xvar} (item),
+\code{zvar} (response value), \code{zzvarno} (group, for faceting), and label columns.
 }
 \description{
-zvar is value for battery items
+Adds a grouping variable to \code{\link[=prep_bat]{prep_bat()}}. The response value is \code{zvar}, the
+item name is \code{xvar}, and the grouping variable (\code{zzvar} / \code{zzvarno}) is kept
+for faceting. Meant for \code{\link[=plot_stack]{plot_stack()}} with facets.
+}
+\examples{
+prep_bat_gr(example_data,
+            vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
+            grvar = pohlavi)
+
 }

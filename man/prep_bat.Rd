@@ -2,7 +2,7 @@
 % Please edit documentation in R/prep_bat.R
 \name{prep_bat}
 \alias{prep_bat}
-\title{Batteries data prep}
+\title{Prepare the distribution of a battery of items}
 \usage{
 prep_bat(
   dat,
@@ -14,21 +14,30 @@ prep_bat(
 )
 }
 \arguments{
-\item{dat}{A data frame in a wide format}
+\item{dat}{A data frame in wide format (one column per item).}
 
-\item{vars}{A variable}
+\item{vars}{The battery item columns. Defaults to all columns of \code{dat}.}
 
-\item{drop_na}{Drop NA or not?}
+\item{drop_na}{Drop missing answers before computing percentages? Default
+\code{TRUE}.}
 
-\item{x_wrap}{DNK}
+\item{x_wrap}{Wrap long item labels onto several lines? Default \code{TRUE}.}
 
-\item{x_chrnum}{DNK}
+\item{x_chrnum}{Characters per line when wrapping item labels.}
 
-\item{x_nsize}{DNK}
+\item{x_nsize}{Append the sample size (\verb{n=}) to item labels? Default \code{FALSE}.}
 }
 \value{
-A tibble
+A tibble with \code{yvar} (percentage per response option), \code{xvar} (item),
+\code{zvar} (response value), and label columns.
 }
 \description{
-Dat is wide data, it is pivoted longer inside the function
+A battery is a block of items sharing the same (usually ordered) response
+scale. For each item this computes the percentage falling into each response
+category: the item name becomes \code{xvar} and the response value becomes \code{zvar}.
+Meant for \code{\link[=plot_stack]{plot_stack()}} (one stacked bar per item).
+}
+\examples{
+prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
+
 }

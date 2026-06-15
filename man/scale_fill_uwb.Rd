@@ -2,17 +2,27 @@
 % Please edit documentation in R/scale_fill_uwb.R
 \name{scale_fill_uwb}
 \alias{scale_fill_uwb}
-\title{scale_fill_uwb}
+\title{Fill scale with a UWB color palette}
 \usage{
 scale_fill_uwb(name = "quali", n, add_na = FALSE)
 }
 \arguments{
-\item{name}{A name of the palette}
+\item{name}{Name of the palette (an element of \link{uwb_scales}). Default
+\code{"quali"}.}
 
-\item{n}{Number of colors}
+\item{n}{Number of colors. If supplied, a continuous palette of \code{n} colors is
+interpolated; if omitted, the discrete palette is used.}
 
-\item{add_na}{Add color for unknown category?}
+\item{add_na}{Add an extra color for an unknown/NA category? Default \code{FALSE}.}
+}
+\value{
+A ggplot2 fill scale.
 }
 \description{
-scale_fill_uwb
+A ggplot2 fill scale that uses one of the built-in UWB color palettes (see
+\link{uwb_scales}). Use it like any other ggplot2 scale, e.g.
+\code{+ scale_fill_uwb("faks")}.
+}
+\seealso{
+\code{\link[=scale_color_uwb]{scale_color_uwb()}}, \code{\link[=uwb_palettes]{uwb_palettes()}}, \link{uwb_scales}
 }

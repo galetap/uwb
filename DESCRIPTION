@@ -26,7 +26,9 @@ Imports:
 Suggests: 
     patchwork,
     quarto,
+    testthat (>= 3.0.0),
     tidyverse
+Config/testthat/edition: 3
 VignetteBuilder: quarto
 Encoding: UTF-8
 LazyData: true

@@ -1,9 +1,12 @@
-#' Plot trend - single var
+#' Line + point trend plot for a single variable
 #'
-#' xvar is the time var.
-#' @param dat A data frame.
+#' Draws a trend line with points and value labels from a prepared tibble. The
+#' category axis (`xvar`) is treated as the time variable.
 #'
-#' @returns Plot.
+#' @param dat A prepared data frame. Must include the columns `xvar` (time),
+#'   `yvar`, `labvar_full`, `title`, `subtitle`, `caption`.
+#'
+#' @returns A ggplot object (also printed).
 #' @export
 #'
 plot_trend  <- function(dat) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/polish_var.R
 \name{polish_var}
 \alias{polish_var}
-\title{Generate final version xvar or zvar to be used in plots}
+\title{Build the final plot-ready category factor}
 \usage{
 polish_var(
   dat,
@@ -14,25 +14,37 @@ polish_var(
 )
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame (optionally containing an \code{nsize} column).}
 
-\item{var_origin}{DNK}
+\item{var_origin}{Name of the raw category column. Default \code{"xvar_df"}.}
 
-\item{var_final}{DNK}
+\item{var_final}{Name of the resulting plot-ready factor column. Default
+\code{"xvar"}.}
 
-\item{wrap}{DNK}
+\item{wrap}{Wrap long labels onto several lines? Default \code{TRUE}.}
 
-\item{chrnum}{DNK}
+\item{chrnum}{Characters per line when wrapping labels.}
 
-\item{nsize}{DNK}
+\item{nsize}{Append the group size (\code{n = ...}) to each label, colour-coded by
+reliability? Default \code{TRUE}.}
 }
 \value{
-DNK
+The input data frame with the \code{var_final} factor column added.
 }
 \description{
-It allows wrapping long text and addding nsize info
-result_name:
-xvar_df/zvar = default, basic text version as found in the data set
-xzvar_nr = helper var with level number, to be used for reordering the modified version, removed
-xvar/zvar = final version that goes to the plot (wrapped or not, with or without nsize)
+Auxiliary helper used by the \verb{prep_*()} functions. Turns a "raw" category
+column (\code{var_origin}) into the final plot-ready factor (\code{var_final}): it
+converts the column to a factor preserving the original order, optionally
+wraps long labels onto several lines, and optionally appends the group size
+as \code{n = ...}, colour-coded by how reliable the size is.
+}
+\examples{
+polish_var(
+  data.frame(
+    xvar_df = c("A very long faculty name that needs wrapping", "Short"),
+    nsize = c(15, 320)
+  ),
+  chrnum = 20
+)
+
 }

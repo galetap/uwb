@@ -1,12 +1,18 @@
-#' lollipop plot of single categorical variable
+#' Lollipop chart of a single categorical variable
 #'
-#' @param dat A data frame.
-#' It has to include columns named: xvar, yvar, labvar (text labels for yvar),
-#' cvar(fill color), title, subtitle, caption.
-#' @param horiz TRUE for horinzontal plot, FALSE for vertical plot.
+#' Draws a lollipop chart from a prepared tibble, typically the output of
+#' [prep_single()] or [mean_bat()].
 #'
-#' @return Plot
+#' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
+#'   `labvar_single`, `cvar`, `title`, `subtitle`, `caption`.
+#' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
+#'   chart.
+#'
+#' @returns A ggplot object (also printed).
 #' @export
+#'
+#' @examples
+#' mean_bat(example_data, vars = c("num1", "num2", "num3")) |> plot_lolli()
 #'
 plot_lolli  <-
   function(dat, horiz = TRUE){

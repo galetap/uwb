@@ -1,10 +1,20 @@
-#' Plot dodge percentages by groupvar
+#' Dodge (side-by-side) bar chart for grouped data
 #'
-#' @param dat A data frame.
-#' @param horiz TRUE for horinzontal plot, FALSE for vertical plot.
+#' Draws side-by-side bars from a prepared tibble, typically the output of
+#' [prep_gr()], [prep_mc_gr()] or [mean_bat_gr()]. Bars are grouped and coloured
+#' by `zvar`.
 #'
-#' @returns Plot.
+#' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
+#'   `zvar`, `labvar`, `labvar_single`, `pos_single`, `title`, `subtitle`,
+#'   `caption`.
+#' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
+#'   chart.
+#'
+#' @returns A ggplot object (also printed).
 #' @export
+#'
+#' @examples
+#' prep_gr(example_data, typ, fak) |> plot_dodge()
 #'
 plot_dodge <-
   function(dat, horiz = TRUE){

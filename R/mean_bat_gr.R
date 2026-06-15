@@ -1,15 +1,29 @@
-#' Means of a battery, grouped
+#' Mean scores of a battery by one grouping variable
 #'
-#' @param dat A data frame
-#' @param vars A variable
-#' @param grvar A grouping variable
-#' @param round_places Rounding number
-#' @param add_total DNK
-#' @param lab_total DNK
-#' @param na_lab DNK
+#' Computes item means within each level of `grvar`. The grouping variable
+#' becomes the category axis (`xvar`, with `n=` appended) and the item name
+#' becomes the secondary category (`zvar`). Meant for [plot_dodge()] or
+#' [plot_lolli()].
 #'
-#' @returns A tibble
+#' @param dat A data frame.
+#' @param vars The numeric item columns.
+#' @param grvar The grouping variable (unquoted column name).
+#' @param round_places Number of decimals used for the rounded label. Default
+#'   `0`.
+#' @param add_total Append an overall group for comparison against the total?
+#'   Default `FALSE`.
+#' @param lab_total Label of the total group. Default `"ZCU"`.
+#' @param na_lab Character values to treat as missing when parsing numbers.
+#'   Default `c("NA", "Bez odpovedi")`.
+#'
+#' @returns A tibble with `yvar` (mean within group), `xvar`, `zvar`, and label
+#'   columns.
 #' @export
+#'
+#' @examples
+#' mean_bat_gr(example_data,
+#'             vars = c("num1", "num2", "num3", "num4", "num5"),
+#'             grvar = fak)
 #'
 mean_bat_gr <-
   function(dat, vars, grvar, round_places = 0,

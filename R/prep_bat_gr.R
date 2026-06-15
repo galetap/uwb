@@ -1,17 +1,24 @@
-#' Grouped battery data prep
+#' Prepare the distribution of a battery of items by a grouping variable
 #'
-#'zvar is value for battery items
-# zzvar is grouping var
-# xvar is names of battery item
-
-#' @param dat A data frame
-#' @param vars A variable
-#' @param grvar A grouping variable
-#' @param add_total DNK
-#' @param lab_total DNK
+#' Adds a grouping variable to [prep_bat()]. The response value is `zvar`, the
+#' item name is `xvar`, and the grouping variable (`zzvar` / `zzvarno`) is kept
+#' for faceting. Meant for [plot_stack()] with facets.
 #'
-#' @returns A tibble
+#' @param dat A data frame in wide format (one column per item).
+#' @param vars The battery item columns. Defaults to all columns of `dat`.
+#' @param grvar The grouping variable (unquoted column name).
+#' @param add_total Append an overall ("ZCU") group for comparison? Default
+#'   `FALSE`.
+#' @param lab_total Label of the total group. Default `"ZCU"`.
+#'
+#' @returns A tibble with `yvar` (percentage per response option), `xvar` (item),
+#'   `zvar` (response value), `zzvarno` (group, for faceting), and label columns.
 #' @export
+#'
+#' @examples
+#' prep_bat_gr(example_data,
+#'             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
+#'             grvar = pohlavi)
 #'
 prep_bat_gr  <-
   function(dat, vars = names(dat), grvar,

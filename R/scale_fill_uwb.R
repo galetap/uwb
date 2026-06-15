@@ -1,9 +1,17 @@
-#' scale_fill_uwb
+#' Fill scale with a UWB color palette
 #'
-#' @param name A name of the palette
-#' @param n Number of colors
-#' @param add_na Add color for unknown category?
+#' A ggplot2 fill scale that uses one of the built-in UWB color palettes (see
+#' [uwb_scales]). Use it like any other ggplot2 scale, e.g.
+#' `+ scale_fill_uwb("faks")`.
 #'
+#' @param name Name of the palette (an element of [uwb_scales]). Default
+#'   `"quali"`.
+#' @param n Number of colors. If supplied, a continuous palette of `n` colors is
+#'   interpolated; if omitted, the discrete palette is used.
+#' @param add_na Add an extra color for an unknown/NA category? Default `FALSE`.
+#'
+#' @returns A ggplot2 fill scale.
+#' @seealso [scale_color_uwb()], [uwb_palettes()], [uwb_scales]
 #' @export
 #'
 scale_fill_uwb <-

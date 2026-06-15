@@ -2,18 +2,26 @@
 % Please edit documentation in R/plot_stack.R
 \name{plot_stack}
 \alias{plot_stack}
-\title{Plot stacked percentages by groupvar}
+\title{Stacked bar chart for grouped data}
 \usage{
 plot_stack(dat, horiz = TRUE)
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar}, \code{yvar},
+\code{zvar}, \code{labvar}, \code{pos}, \code{title}, \code{subtitle}, \code{caption}.}
 
-\item{horiz}{TRUE for horinzontal plot, FALSE for vertical plot.}
+\item{horiz}{\code{TRUE} for a horizontal chart (default), \code{FALSE} for a vertical
+chart.}
 }
 \value{
-Plot.
+A ggplot object (also printed).
 }
 \description{
-Plot stacked percentages by groupvar
+Draws one stacked bar per category from a prepared tibble, typically the
+output of \code{\link[=prep_gr]{prep_gr()}}, \code{\link[=prep_bat]{prep_bat()}} or \code{\link[=prep_mc_gr]{prep_mc_gr()}}. Bars are coloured by
+\code{zvar} and stack to 100\%.
+}
+\examples{
+prep_gr(example_data, typ, fak, add_total = TRUE) |> plot_stack()
+
 }

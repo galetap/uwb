@@ -2,16 +2,18 @@
 % Please edit documentation in R/plot_trend.R
 \name{plot_trend}
 \alias{plot_trend}
-\title{Plot trend - single var}
+\title{Line + point trend plot for a single variable}
 \usage{
 plot_trend(dat)
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar} (time),
+\code{yvar}, \code{labvar_full}, \code{title}, \code{subtitle}, \code{caption}.}
 }
 \value{
-Plot.
+A ggplot object (also printed).
 }
 \description{
-xvar is the time var.
+Draws a trend line with points and value labels from a prepared tibble. The
+category axis (\code{xvar}) is treated as the time variable.
 }

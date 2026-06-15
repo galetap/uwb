@@ -1,12 +1,23 @@
-#' Means of a battery
+#' Mean scores of a battery of numeric items
 #'
-#' @param dat A data frame
-#' @param vars A variable
-#' @param round_places Rounding number
-#' @param na_lab DNK
+#' Computes the mean (and sample size) of each numeric item in `vars`, returning
+#' `yvar` as the mean instead of a percentage. Values are parsed with
+#' [readr::parse_number()], treating the strings in `na_lab` as missing. Meant
+#' for [plot_lolli()] or [plot_bar()].
 #'
-#' @returns A tibble
+#' @param dat A data frame.
+#' @param vars The numeric item columns.
+#' @param round_places Number of decimals used for the rounded label
+#'   (`labvar_full`). Default `0`.
+#' @param na_lab Character values to treat as missing when parsing numbers.
+#'   Default `c("NA", "Bez odpovedi")`.
+#'
+#' @returns A tibble with one row per item (`yvar` = mean, `nsize` = sample size,
+#'   `xvar` = item, plus label columns).
 #' @export
+#'
+#' @examples
+#' mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"))
 #'
 
 mean_bat <-

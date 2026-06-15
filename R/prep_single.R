@@ -1,15 +1,21 @@
-#' Prepare percentage data of single var
+#' Prepare the distribution of a single categorical variable
 #'
-#' @param dat A data frame
-#' @param var A variable
-#' @param order Should the results be ordered?
-#' @param drop_na Drop NA or not?
+#' Computes the distribution (in percent) of one categorical variable and
+#' returns a plot-ready tibble for [plot_bar()] or [plot_lolli()].
 #'
-#' @returns A tibble with enhanced frequency table.
+#' @param dat A data frame.
+#' @param var The categorical variable (unquoted column name).
+#' @param order Reorder categories by frequency (largest first)? Default `FALSE`.
+#' @param drop_na Drop missing values of `var` before computing percentages?
+#'   Default `TRUE`.
+#'
+#' @returns A tibble with one row per category (`yvar` = percentage, `n` = count,
+#'   `xvar` = plot-ready factor, plus label columns).
 #' @export
 #'
 #' @examples
-#' prep_single(ggplot2::mpg, cyl)
+#' prep_single(example_data, fak)
+#' prep_single(example_data, fak, order = TRUE)
 #'
 prep_single  <-
   function(dat, var, order = FALSE, drop_na = TRUE){

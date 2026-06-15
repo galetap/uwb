@@ -2,20 +2,24 @@
 % Please edit documentation in R/plot_trend_gr.R
 \name{plot_trend_gr}
 \alias{plot_trend_gr}
-\title{Plot trend by a grouping var}
+\title{Trend plot for several groups}
 \usage{
 plot_trend_gr(dat, total, add_points = TRUE)
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar} (time),
+\code{yvar}, \code{zvar} (group), \code{labvar_full}, \code{title}, \code{subtitle}, \code{caption}.}
 
-\item{total}{DNK}
+\item{total}{Optional name of the group (level of \code{zvar}) to emphasise with
+larger points (e.g. the overall total).}
 
-\item{add_points}{DNL}
+\item{add_points}{Add points and value labels on top of the lines? Default
+\code{TRUE}.}
 }
 \value{
-Plot.
+A ggplot object.
 }
 \description{
-xvar is the time var, zvar is the groups var
+Draws a multi-line trend plot from a prepared tibble: the category axis
+(\code{xvar}) is the time variable and \code{zvar} defines the groups (one line each).
 }

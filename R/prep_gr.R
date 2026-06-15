@@ -1,25 +1,33 @@
-#' Grouped data prep with or without total
+#' Prepare the distribution of a categorical variable by one grouping variable
 #'
-#' var becomes zvar, grvar becomes xvar, it can be switched by grvar_to_x = FALSE
+#' Computes the distribution (in percent) of `var` within each level of
+#' `grvar`; percentages sum to 100% inside each group. The result is meant for
+#' [plot_stack()] or [plot_dodge()].
 #'
-#' @param dat A data frame
-#' @param var A variable
-#' @param grvar A group variable
-#' @param drop_na Drop NA or not?
-#' @param add_total T/F
-#' @param lab_total DNK
-#' @param grvar_to_x DNK
-#' @param show_nsize DNK
-#' @param x_wrap DNK
-#' @param x_chrnum DNK
-#' @param z_wrap DNK
-#' @param z_chrnum DNK
+#' @param dat A data frame.
+#' @param var The categorical variable (unquoted column name).
+#' @param grvar The grouping variable (unquoted column name).
+#' @param drop_na Drop missing values of `var` before computing percentages?
+#'   Default `TRUE`.
+#' @param add_total Append a pseudo-group containing all respondents for
+#'   comparison against the total? Default `FALSE`.
+#' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
+#' @param grvar_to_x Place `grvar` on the category axis (`xvar`) and `var` as the
+#'   secondary category (`zvar`)? Default `TRUE`; set `FALSE` to swap roles.
+#' @param show_nsize Append the group size (`n=`) to the category labels?
+#'   Default `TRUE`.
+#' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping `xvar` labels.
+#' @param z_wrap Wrap long `zvar` labels onto several lines? Default `TRUE`.
+#' @param z_chrnum Characters per line when wrapping `zvar` labels.
 #'
-#' @returns A data frame
+#' @returns A tibble with `yvar` (percentage within group), `xvar`, `zvar`, and
+#'   label columns.
 #' @export
 #'
 #' @examples
-#' prep_gr(ggplot2::mpg, class, cyl)
+#' prep_gr(example_data, typ, fak)
+#' prep_gr(example_data, typ, fak, add_total = TRUE)
 #'
 prep_gr <-
   function(dat, var, grvar, drop_na = TRUE, add_total = FALSE, lab_total = "Z\u010cU",

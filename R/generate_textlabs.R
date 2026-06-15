@@ -1,10 +1,20 @@
-#' Generate vars to be used for geom_text
+#' Add text-label columns for plotting
 #'
-#' @param dat A data frame
-#' @param round_places Number of decimals
+#' Auxiliary helper used by the `prep_*()` and `mean_*()` functions. Takes a data
+#' frame with a `yvar` column and adds the columns used by `geom_text()` in the
+#' plot functions: `labvar_full` (rounded value), `labvar_single` (label for
+#' single-series bars, small values shown as `"<1"`), `labvar` (label for
+#' stacked/dodged charts, tiny slices set to `NA`), `pos` / `pos_single` (label
+#' positions), and `cvar` / `cvar_text` (label colours for contrast).
 #'
-#' @returns A data frame
+#' @param dat A data frame containing a `yvar` column.
+#' @param round_places Number of decimals for the rounded labels. Default `0`.
+#'
+#' @returns The input data frame with the added text-label columns.
 #' @export
+#'
+#' @examples
+#' generate_textlabs(data.frame(yvar = c(5, 42, 0.3, 88)))
 #'
 generate_textlabs <- function(dat, round_places = 0){
   labdat = dat |>

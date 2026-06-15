@@ -2,22 +2,27 @@
 % Please edit documentation in R/plot_ribbon.R
 \name{plot_ribbon}
 \alias{plot_ribbon}
-\title{Function to generate ribbon plot}
+\title{Ribbon (Sankey-bump) plot of group shares over time}
 \usage{
 plot_ribbon(dat, space = 5, fill = .uwb_scales$quali, margin = 15)
 }
 \arguments{
-\item{dat}{A data frame.}
+\item{dat}{A prepared data frame. Must include the columns \code{xvar} (time,
+factor), \code{yvar}, \code{zvar} (group), \code{labvar}, \code{title}, \code{subtitle}, \code{caption}.}
 
-\item{space}{DNK}
+\item{space}{Vertical space between ribbons. Default \code{5}.}
 
-\item{fill}{DNK}
+\item{fill}{Vector of fill colours for the ribbons. Defaults to the \code{quali}
+scale.}
 
-\item{margin}{DNK}
+\item{margin}{Right-hand margin (and label wrapping width) reserved for the
+ribbon-end annotations. Default \code{15}.}
 }
 \value{
-Plot.
+A ggplot object.
 }
 \description{
-hide_lab = do not show labels of small bumps
+Draws a smooth ribbon (Sankey-bump) plot from a prepared tibble, showing how
+the share of each group (\code{zvar}) evolves across the time axis (\code{xvar}). Each
+ribbon is labelled at its end. \code{xvar} must be a factor.
 }

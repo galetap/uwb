@@ -2,22 +2,32 @@
 % Please edit documentation in R/mean_bat.R
 \name{mean_bat}
 \alias{mean_bat}
-\title{Means of a battery}
+\title{Mean scores of a battery of numeric items}
 \usage{
 mean_bat(dat, vars, round_places = 0, na_lab = c("NA", "Bez odpovědďi"))
 }
 \arguments{
-\item{dat}{A data frame}
+\item{dat}{A data frame.}
 
-\item{vars}{A variable}
+\item{vars}{The numeric item columns.}
 
-\item{round_places}{Rounding number}
+\item{round_places}{Number of decimals used for the rounded label
+(\code{labvar_full}). Default \code{0}.}
 
-\item{na_lab}{DNK}
+\item{na_lab}{Character values to treat as missing when parsing numbers.
+Default \code{c("NA", "Bez odpovedi")}.}
 }
 \value{
-A tibble
+A tibble with one row per item (\code{yvar} = mean, \code{nsize} = sample size,
+\code{xvar} = item, plus label columns).
 }
 \description{
-Means of a battery
+Computes the mean (and sample size) of each numeric item in \code{vars}, returning
+\code{yvar} as the mean instead of a percentage. Values are parsed with
+\code{\link[readr:parse_number]{readr::parse_number()}}, treating the strings in \code{na_lab} as missing. Meant
+for \code{\link[=plot_lolli]{plot_lolli()}} or \code{\link[=plot_bar]{plot_bar()}}.
+}
+\examples{
+mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"))
+
 }
