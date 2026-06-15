@@ -5,7 +5,7 @@
 #' @param order Should the results be ordered?
 #' @param drop_na Drop NA or not?
 #'
-#' @returns A tibble with enhanced frequency table
+#' @returns A tibble with enhanced frequency table.
 #' @export
 #'
 #' @examples

@@ -36,7 +36,7 @@ prep_mc  <- function(
   if (order) {
     mc =
       mc |>
-      dplyr::mutate(xvar_df = forcats::fct_reorder(xvar, -n))
+      dplyr::mutate(xvar_df = forcats::fct_reorder(xvar_df, -n))
   }
 
   if ("lab" %in% names(mc)) {

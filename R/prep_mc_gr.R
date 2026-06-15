@@ -31,7 +31,6 @@ prep_mc_gr <- function(
     mutate(yvar = n/sum(n)*100,
            zvar = name,
            nsize = sum(n),
-           xvar = paste0({{grvar}}, "\nn=", nsize),
            xvar_df = {{grvar}},) |>
     filter(yvar > 0) |>
     filter(value == chosen) |>

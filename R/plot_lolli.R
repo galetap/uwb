@@ -26,7 +26,7 @@ plot_lolli  <-
            title = d$title[1],
            subtitle = d$subtitle[1],
            caption = d$caption[1]) +
-      scale_x_discrete(labels = label_wrap(.uwb_vals$chrnum)) +
+      scale_x_discrete(labels = scales::label_wrap(.uwb_vals$chrnum)) +
       theme_uwb() +
       theme(axis.ticks.y = element_blank()
       )

@@ -16,7 +16,9 @@ mean_bat_gr2  <-
     means = dat |>
       select(c({{grvar}}, {{grvar2}}, all_of(vars))) |>
       pivot_longer(cols = all_of(vars)) |>
-      mutate(value_num = parse_number(value, na = na_lab)) |>
+      mutate(value_chr = as.character(value),
+             value_chr = if_else(value_chr %in% na_lab, NA_character_, value_chr),
+             value_num = parse_number(value_chr)) |>
       drop_na(value_num) |>
       group_by(name, {{grvar}}, {{grvar2}}) |>
       summarise(yvar = mean(value_num, na.rm = T),
