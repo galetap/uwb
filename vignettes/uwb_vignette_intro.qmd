@@ -41,6 +41,10 @@ remotes::install_github("galetap/uwb")
 
 # Reinstall when the package is updated on GitHub
 remotes::install_github("galetap/uwb", force = TRUE)
+
+# Install from a specific branch (other than master)
+remotes::install_github("galetap/uwb", ref = "Branch_name", force = TRUE)
+
 ```
 
 After installation, load the package in every session:
@@ -113,9 +117,9 @@ These vectors can be used directly when a manual color assignment is needed — 
 names(uwb_scales)
 ```
 
-The available scales are: `quali`, `faks`, `uwb_faks`, `mono`, `mono_rev`, `monored`, `monored_rev`, `long`, `long_rev`, `bi`, `bi_rev`. See the *UWB theme and colors* vignette for visual examples of all scales.
+See the *UWB theme and colors* vignette for visual examples.
 
-## Example dataset: `example_data`
+## Example dataset: `example_data` and `codebook`
 
 `example_data` is a data frame intended for demonstrating the data preparation and plotting functions. Rows are respondents; columns are variables of different types that cover the main use cases of the package:
 
@@ -129,6 +133,12 @@ The available scales are: `quali`, `faks`, `uwb_faks`, `mono`, `mono_rev`, `mono
 
 ```{r}
 glimpse(example_data)
+```
+
+`example_data` is accompanied with the `codebook` that provides labels for the `example_data` dataset. 
+
+```{r}
+glimpse(codebook)
 ```
 
 # Overview of functions
@@ -187,7 +197,7 @@ ex2(example_data, fak, typ)
 
 # General workflow
 
-The typical workflow for producing a plot has two steps: (1) prepare the plot data with a `prep_*()` function, then (2) pass it to a `plot_*()` function.
+The typical workflow for producing a plot has two steps: (1) prepare the plot data with a `prep_*()` function, then (2) pass it to a `plot_*()` function. The `prep_*()` functions impute title, subtitle, and caption from `codebook` automatically.
 
 ```{r echo=TRUE, warning=FALSE}
 # Step 1: prepare the plot data
@@ -208,15 +218,7 @@ prep_single(example_data, fak) |>
   plot_bar()
 ```
 
-By default, `plot_bar()` produces a horizontal bar chart. Set `horiz = FALSE` for a vertical chart:
-
-```{r echo=TRUE, warning=FALSE}
-prep_single(example_data, fak) |>
-  mutate(title = "Distribution by faculty") |>
-  plot_bar(horiz = FALSE)
-```
-
-## The codebook object
+## The use of codebook
 
 Each `prep_*()` function looks for an object named `codebook` in the calling environment and tries to import plot labels (`title`, `subtitle`, `caption`, and `lab` for batteries) from it. If no such object exists, those columns are filled with empty strings.
 
@@ -235,9 +237,6 @@ The package ships with a built-in `codebook` object that provides labels for the
 print(codebook)
 ```
 
-Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically:
+Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically. Picking the data from codebook can also be done manually in custom workflows - see the *Data preparation and plotting* vignette.
 
-```{r echo=TRUE, warning=FALSE}
-prep_single(example_data, fak) |>
-  plot_bar()
-```
+

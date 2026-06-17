@@ -53,7 +53,8 @@ prep_mc_gr <- function(
              zvar = paste0(lab_total, "\nn=", nsize))
     mc = mc |> bind_rows(total)
   }
-  mc <- try(mc |> mutate(zvar = lab), silent = T) #try to rename items with lab from codebook
+  mc_try <- try(mc |> mutate(zvar = lab), silent = TRUE) #try to rename items with lab from codebook
+  if (!inherits(mc_try, "try-error")) mc <- mc_try
   mc <-
     mc |>
     polish_var(wrap = x_wrap, chrnum = x_chrnum, nsize = x_nsize)

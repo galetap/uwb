@@ -43,7 +43,8 @@ prep_bat  <-
     impute_labs() |>
     ungroup()
 
-  bat = try(bat |> mutate(xvar_df = lab), silent = T) #try to rename items with lab from codebook
+  bat_try = try(bat |> mutate(xvar_df = lab), silent = TRUE) #try to rename items with lab from codebook
+  if (!inherits(bat_try, "try-error")) bat <- bat_try
   bat = bat |>
     polish_var(wrap = x_wrap, chrnum = x_chrnum, nsize = x_nsize)
 

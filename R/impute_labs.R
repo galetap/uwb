@@ -15,8 +15,10 @@
 #' impute_labs(data.frame(name = c("num1", "num2")))
 #'
 impute_labs  <- function(dat) {
-  if (exists("codebook")) {
-    dat = dat |> left_join(codebook)
+  cb <- mget("codebook", envir = parent.frame(), inherits = TRUE,
+             ifnotfound = list(NULL))[[1]]
+  if (!is.null(cb) && is.data.frame(cb)) {
+    dat = dat |> left_join(cb)
   }
   else {
     dat = dat |>

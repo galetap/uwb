@@ -57,9 +57,30 @@ The palettes work for discrete data only (i.e. isolated values without decimal p
 
 `uwb_palettes()`
 
+
+## Themes
+
+The UWB theme is applied automatically by the package's `plot_*()` functions, so in normal use you do not call the theme directly — you prepare data with a `prep_*()` function and plot it with a `plot_*()` function. The examples below use the built-in `example_data`.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+# Bar plot of a single categorical variable (uses the theme internally)
+prep_single(example_data, fak) |>
+  #mutate(title = "Distribution by faculty") |>
+  plot_bar()
+```
+
+You can call the themes in manually coded plots.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+# Bar plot of a single categorical variable (uses the theme internally)
+example_data, fak) |>
+  #mutate(title = "Distribution by faculty") |>
+  plot_bar()
+```
+
 ## Color and Fill scales
 
-There are 5 built-in color scales that can be called from ggplot by `scale_fill_uwb("scale_name")` or `scale_color_uwb("scale_name")`.
+There are 6 built-in color scales that can be called from ggplot by `scale_fill_uwb("scale_name")` or `scale_color_uwb("scale_name")`. Some of the scales come in the reverse version, as well: `mono_rev`, `monored_rev`, `bi_rev`.
 
 ```{r include=FALSE}
 # Fake data to plot scales
@@ -90,36 +111,33 @@ cplot2 = cplot +
 
 cplot3 = cplot_short +
   scale_fill_uwb("mono", n = 5) +
-  labs(title = 'Monochromatic scale  "mono"')
+  labs(title = 'Blue monochromatic scale  "mono"')
 
-cplot4 = cplot + scale_fill_uwb("long", n = 10) +
+cplot4 = cplot_short +
+  scale_fill_uwb("monored", n = 5) +
+  labs(title = 'Red monochromatic scale  "monored"')
+
+cplot5 = cplot + scale_fill_uwb("long", n = 10) +
   labs(title = 'Long scale "long"')
 
-cplot5 = cplot_short + scale_fill_uwb("bi", n = 5) + labs(title = 'Bipolar scale "bi"')
+cplot6 = cplot_short + scale_fill_uwb("bi", n = 5) + labs(title = 'Bipolar scale "bi"')
 
-cplot1 / cplot2 / cplot3 / cplot4 / cplot5
+cplot1 / cplot2 / cplot3 / cplot4 / cplot5 / cplot6
 ```
 
 -   The qualitative scale is the default in the `plot_*` functions (not shown in this vignette). The first item (blue) is the main color. It should be used in single-color plots. It is also included in the monochromatic and long scales as their mid-point.
 
 -   The faculty scale gives the colors for the faculties in alphabetical order. The last color (dark grey) is for the university in total.
 
--   The monochromatic and long scales are for visualization of intensity, going from light to dark. Mono is suitable for ordinal variables with a low number of categories (up to 5). The long scale provides a longer hue range to cover more categories.
+-   The monochromatic and long scales are for visualization of intensity, going from light to dark. Mono is suitable for ordinal variables with a low number of categories (up to 5). The long scale provides a longer hue range to cover more categories. Mono scale has a blue and red version.
 
 -   The bipolar scale has darker poles and lighter middle values to visualize polarity (agree-disagree etc.). The blue pole is a darker version of the main blue color from the qualitative scale.
 
 The two qualitative scales (`quali` and `faks`) do not need any other arguments, just the name of the scale. The number of colors is set according to the number of categories. The ordinal scales need argument `n` which gives the number of categories. This generates the required number of steps in the color scale.
 
-### Examples of use
 
-The UWB theme is applied automatically by the package's `plot_*()` functions, so in normal use you do not call the theme directly — you prepare data with a `prep_*()` function and plot it with a `plot_*()` function. The examples below use the built-in `example_data`.
 
-```{r echo=TRUE, warning=FALSE, results='hide'}
-# Bar plot of a single categorical variable (uses the theme internally)
-prep_single(example_data, fak) |>
-  mutate(title = "Distribution by faculty") |>
-  plot_bar()
-```
+### Examples of use - qualitative scales
 
 The color and fill scale functions (`scale_fill_uwb()`, `scale_color_uwb()`) can be added to any ggplot. The following shows the qualitative scale applied to a manually built plot.
 
@@ -147,13 +165,7 @@ ggplot(ex_long, aes(x = fak, y = pct, fill = typ)) +
   labs(x = "", y = "%", fill = "")
 ```
 
-### Option `reverse`
 
-Reverse scales can be called under their separate names ending with `_rev`.
-
-```{r echo=TRUE, warning=FALSE}
-names(uwb_scales)
-```
 
 ### Function `uwb_palettes()`
 

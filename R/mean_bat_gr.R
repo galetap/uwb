@@ -56,6 +56,8 @@ mean_bat_gr <-
       means = bind_rows(means, total)
     }
 
-    means = try(means |> mutate(zvar = lab), silent = T) #try to rename items with lab from codebook
+    means_try = try(means |> mutate(zvar = lab), silent = TRUE) #try to rename items with lab from codebook
+    if (!inherits(means_try, "try-error")) means <- means_try
 
+    return(means)
   }

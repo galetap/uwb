@@ -46,7 +46,8 @@ prep_bat_gr  <-
       bat = bat |> bind_rows(total)
     }
 
-    bat = try(bat |> mutate(xvar = lab), silent = T) #try to rename items with lab from codebook
+    bat_try = try(bat |> mutate(xvar = lab), silent = TRUE) #try to rename items with lab from codebook
+    if (!inherits(bat_try, "try-error")) bat <- bat_try
 
     return(bat)
 
