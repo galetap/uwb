@@ -1,19 +1,20 @@
 ---
 title: "Getting started with uwb"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with uwb}
-  %\VignetteEngine{quarto::html}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-format:
-  html:
-    page-layout: full
-    mainfont: Open Sans
-toc: true
-editor: source
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
 ```{r include=FALSE}
-rm(list = ls())
 library(tidyverse)
 library(uwb)
 ```
@@ -36,11 +37,13 @@ Dedicated vignettes cover data preparation and plot functions (*Data preparation
 # Install remotes if you don't have it yet
 install.packages("remotes")
 
-# Install package from GitHub
-# It should reinstall if already installed
-remotes::install_github("galetap/uwb", build_vignettes = TRUE)
+# Install package from GitHub 
+# Use a fresh R session if there is a previous version of the package
+# It should reinstall if already installed 
+remotes::install_github("galetap/uwb", build_vignettes = FALSE)
 
 # Force reinstall if the automatic reinstall failed
+remove.packages("uwb")
 remotes::install_github("galetap/uwb", build_vignettes = TRUE, force = TRUE)
 
 # Install from a specific branch (other than master)
@@ -250,5 +253,3 @@ The `uwb` package is under continuous development, and suggestions are welcome. 
 - **Working through them.** The list of open Issues is the to-do list. When there is time, we pick an Issue and solve it, then close it.
 
 The full description of this workflow lives in [`CONTRIBUTING.md`](https://github.com/galetap/uwb/blob/master/CONTRIBUTING.md) in the package repository.
-
-

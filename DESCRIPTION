@@ -25,12 +25,13 @@ Imports:
     stringr,
     tidyr
 Suggests: 
+    knitr,
     patchwork,
-    quarto,
+    rmarkdown,
     testthat (>= 3.0.0),
     tidyverse
 Config/testthat/edition: 3
-VignetteBuilder: quarto
+VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
