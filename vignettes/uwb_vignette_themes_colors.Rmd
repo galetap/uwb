@@ -1,8 +1,8 @@
 ---
-title: "3. UWB theme and colors"
+title: "UWB theme and colors"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{UWB theme and colors}
+  %\VignetteIndexEntry{3. UWB theme and colors}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

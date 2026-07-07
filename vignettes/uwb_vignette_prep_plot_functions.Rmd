@@ -1,8 +1,8 @@
 ---
-title: "2. Data preparation and plotting"
+title: "Data preparation and plotting"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Data preparation and plotting}
+  %\VignetteIndexEntry{2. Data preparation and plotting}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -149,11 +149,9 @@ prep_gr(example_data, pohlavi, fak) |>
 `prep_gr2()` extends `prep_gr()` with a second grouping variable `grvar2`. The first grouping variable (`grvar`) becomes the category axis, `var` becomes the stacking/dodging variable, and `grvar2` is kept (as `zzvar`) for use as a facet. It accepts the same `add_total`, `grvar_to_x`, and wrapping arguments as `prep_gr()`.
 
 ```{r}
-facetplot <- prep_gr2(example_data, pohlavi, fak, typ) |> 
+prep_gr2(example_data, pohlavi, fak, typ) |> 
   filter(!is.na(pohlavi)) |> 
   plot_stack() + facet_wrap(~ typ, scales = "free_y")
-
-facetplot
 ```
 
 # Multiple choice questions
@@ -246,12 +244,11 @@ Arguments:
 
 The outcome is suitable for a plotting single items (groups compared to each other and optionally to the total) or a facet plot.
 ```{r}
-facetplot <- prep_bat_gr(example_data |> drop_na(pohlavi),
+prep_bat_gr(example_data |> drop_na(pohlavi),
             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
             grvar = pohlavi) |> 
   plot_stack() + facet_wrap(~ zzvar)  
 
-facetplot
 ```
 
 # Mean scores

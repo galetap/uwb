@@ -76,3 +76,20 @@ Datasets in `data/` must be saved as `name.rda` (e.g. `codebook.rda`), **not**
 `.RData`, and `.rdata`; a capitalized `.Rda` is silently ignored, so the object
 never becomes available. Prefer `usethis::use_data(codebook, overwrite = TRUE)`,
 which writes the file with the correct name and extension automatically.
+
+### Don't delete `.gitignore` files in subfolders
+
+The repository has more than one `.gitignore`: the root `.gitignore` plus a
+folder-level one in `vignettes/` (and possibly others). **This is intentional —
+do not delete the subfolder ones.**
+
+Git supports multiple `.gitignore` files, and each one applies to the folder it
+lives in (and its subfolders). The rules stack on top of the parent rules, and
+patterns are interpreted relative to the file's own location.
+
+The `vignettes/.gitignore` scopes patterns like `*.html`, `*.R`, and `*_files/`
+to the `vignettes/` folder so that generated vignette build artifacts are
+ignored without affecting your real package source. Those same patterns
+could not live in the root `.gitignore` — a root-level `*.R` would ignore every
+R source file in `R/`. Keeping them folder-scoped is why the separate file
+exists.

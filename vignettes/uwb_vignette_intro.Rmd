@@ -1,8 +1,8 @@
 ---
-title: "1. Getting started with uwb"
+title: "Getting started with uwb"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Getting started with uwb}
+  %\VignetteIndexEntry{1. Getting started with uwb}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -46,9 +46,9 @@ install.packages("remotes")
 # Install package from GitHub 
 # Use a fresh R session if there is a previous version of the package
 # It should reinstall if already installed 
-remotes::install_github("galetap/uwb", build_vignettes = FALSE)
+remotes::install_github("galetap/uwb", build_vignettes = TRUE)
 
-# Force reinstall if the automatic reinstall failed
+# Force reinstall if the automatic reinstall failes
 remove.packages("uwb")
 remotes::install_github("galetap/uwb", build_vignettes = TRUE, force = TRUE)
 
