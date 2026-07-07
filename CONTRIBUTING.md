@@ -33,3 +33,46 @@ git commit -m "Add custom colors to plot_bar. Closes #12"
 
 The list of open Issues stays short, and closed Issues are the record of what
 has been done.
+
+---
+
+## Development notes
+
+### Vignettes must use the `knitr` engine, not `quarto`
+
+The package vignettes are written as `.Rmd` files and built with the **`knitr`**
+engine (`VignetteBuilder: knitr` in `DESCRIPTION`, and
+`%\VignetteEngine{knitr::rmarkdown}` in each vignette header). **Do not switch
+the vignettes back to `quarto` / `.qmd`.**
+
+**Why.** When the package is installed with vignettes, `R CMD build` first 
+installs the package into a temporary library and then
+renders every vignette. The `quarto` engine renders each vignette in a 
+separate R process that does not reliably have that temporary library on its
+`.libPaths()`. As a result `library(uwb)` inside the vignette fails during the
+build and the whole install aborts.
+
+`knitr` renders vignettes in-process during `R CMD build`, so `library(uwb)`
+always resolves to the package being built. This makes the one-step
+`install_github(..., build_vignettes = TRUE)` work.
+
+If you edit or add a vignette, keep the `.Rmd` + knitr header format:
+
+```yaml
+---
+title: "Your title"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Your title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```
+
+### Data files must use a lowercase `.rda` extension
+
+Datasets in `data/` must be saved as `name.rda` (e.g. `codebook.rda`), **not**
+`name.Rda`. R's lazy-data mechanism only recognizes the extensions `.rda`,
+`.RData`, and `.rdata`; a capitalized `.Rda` is silently ignored, so the object
+never becomes available. Prefer `usethis::use_data(codebook, overwrite = TRUE)`,
+which writes the file with the correct name and extension automatically.

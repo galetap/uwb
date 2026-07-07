@@ -1,5 +1,5 @@
 ---
-title: "Getting started with uwb"
+title: "1. Getting started with uwb"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with uwb}
@@ -10,8 +10,14 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width  = 7,       # inches — matches the html_vignette content width
+  fig.height = 4.3,     # shorter, wider aspect ratio (~16:10)
+  fig.retina = 2,       # crisp rendering on HiDPI screens
+  dpi        = 96,      # web-appropriate resolution
+  out.width  = "100%"   # scale the figure to exactly the text-column width
 )
+
 ```
 
 ```{r include=FALSE}
@@ -57,7 +63,9 @@ library(uwb)
 ```
 
 ## Access vignettes
+``` r
 browseVignettes("uwb")
+```
 
 # Objects
 

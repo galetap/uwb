@@ -1,5 +1,5 @@
 ---
-title: "Data preparation and plotting"
+title: "2. Data preparation and plotting"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Data preparation and plotting}
@@ -10,8 +10,14 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width  = 7,       # inches — matches the html_vignette content width
+  fig.height = 4.3,     # shorter, wider aspect ratio (~16:10)
+  fig.retina = 2,       # crisp rendering on HiDPI screens
+  dpi        = 96,      # web-appropriate resolution
+  out.width  = "100%"   # scale the figure to exactly the text-column width
 )
+
 ```
 
 ```{r include=FALSE}
@@ -240,10 +246,12 @@ Arguments:
 
 The outcome is suitable for a plotting single items (groups compared to each other and optionally to the total) or a facet plot.
 ```{r}
-prep_bat_gr(example_data |> drop_na(pohlavi),
+facetplot <- prep_bat_gr(example_data |> drop_na(pohlavi),
             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
             grvar = pohlavi) |> 
   plot_stack() + facet_wrap(~ zzvar)  
+
+facetplot
 ```
 
 # Mean scores

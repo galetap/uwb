@@ -1,5 +1,5 @@
 ---
-title: "UWB theme and colors"
+title: "3. UWB theme and colors"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{UWB theme and colors}
@@ -10,7 +10,12 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width  = 7,       # inches — matches the html_vignette content width
+  fig.height = 4.3,     # shorter, wider aspect ratio (~16:10)
+  fig.retina = 2,       # crisp rendering on HiDPI screens
+  dpi        = 96,      # web-appropriate resolution
+  out.width  = "100%"   # scale the figure to exactly the text-column width
 )
 ```
 
@@ -72,7 +77,7 @@ You can call the themes in manually coded plots.
 
 ```{r echo=TRUE, warning=FALSE, results='hide'}
 # Manually coded bar plot with the UWB theme applied directly
-ggplot(example_data, aes(x = fak)) +
+ggplot(example_data, aes(x = typ)) +
   geom_bar(fill = c_zcu) +
   labs(x = "", y = "Count") +
   theme_uwb()
@@ -80,7 +85,7 @@ ggplot(example_data, aes(x = fak)) +
 
 ## Color and Fill scales
 
-There are 6 built-in color scales that can be called from ggplot by `scale_fill_uwb("scale_name")` or `scale_color_uwb("scale_name")`. Some of the scales come in the reverse version, as well: `mono_rev`, `monored_rev`, `bi_rev`.
+There are 6 built-in color scales that can be called from ggplot by `scale_fill_uwb("scale_name")` or `scale_color_uwb("scale_name")`. Some of the scales come in the reverse order, as well: `mono_rev`, `monored_rev`, `bi_rev`.
 
 ```{r include=FALSE}
 # Fake data to plot scales
@@ -125,7 +130,7 @@ cplot6 = cplot_short + scale_fill_uwb("bi", n = 5) + labs(title = 'Bipolar scale
 cplot1 / cplot2 / cplot3 / cplot4 / cplot5 / cplot6
 ```
 
--   The qualitative scale is the default in the `plot_*` functions (not shown in this vignette). The first item (blue) is the main color. It should be used in single-color plots. It is also included in the monochromatic and long scales as their mid-point.
+-   The qualitative scale is the default in the `plot_*` functions (not shown in this vignette). The first item (blue) is the main color. It should be used in single-color plots and is used in `prep_single()` as the color-defining columns. It is also included in the monochromatic and long scales as their mid-point.
 
 -   The faculty scale gives the colors for the faculties in alphabetical order. The last color (dark grey) is for the university in total.
 
@@ -133,40 +138,37 @@ cplot1 / cplot2 / cplot3 / cplot4 / cplot5 / cplot6
 
 -   The bipolar scale has darker poles and lighter middle values to visualize polarity (agree-disagree etc.). The blue pole is a darker version of the main blue color from the qualitative scale.
 
-The two qualitative scales (`quali` and `faks`) do not need any other arguments, just the name of the scale. The number of colors is set according to the number of categories. The ordinal scales need argument `n` which gives the number of categories. This generates the required number of steps in the color scale.
-
-
-
 ### Examples of use - qualitative scales
 
-The color and fill scale functions (`scale_fill_uwb()`, `scale_color_uwb()`) can be added to any ggplot. The following shows the qualitative scale applied to a manually built plot.
+The color and fill scale functions (`scale_fill_uwb()`, `scale_color_uwb()`) can be added to any ggplot. The following shows the qualitative scale applied to a manually built plot. The two qualitative scales (`quali` and `faks`) do not need any other arguments, just the name of the scale. The number of colors is set according to the number of categories. 
 
 ```{r echo=TRUE, warning=FALSE, results='hide'}
-ex_long <- example_data |>
-  count(fak, typ) |>
-  group_by(fak) |>
-  mutate(pct = 100 * n / sum(n)) |>
-  ungroup()
+# The "quali" scale is used by default
+prep_gr(example_data, fak, pohlavi) |> 
+    plot_stack()
 
-ggplot(ex_long, aes(x = fak, y = pct, fill = typ)) +
-  geom_col(position = position_dodge(width = 0.85), width = 0.85, color = "white") +
-  scale_fill_uwb("quali") +
-  labs(x = "", y = "%", fill = "")
+# Change to "fak" scale. And set a more informative title
+prep_gr(example_data, fak, pohlavi) |> 
+    plot_stack() + 
+    scale_fill_uwb("faks") + 
+    labs(title = "Studenti a studentky podle fakulty, kterou studují")
+```
+
+### Examples of use - gradual scales 
+
+Unlike the qualitative scales, the gradual scales need argument `n` which gives the number of categories. This generates the required number of steps in the color scale.
+
+```{r echo=TRUE, warning=FALSE, results='hide'}
+prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5")) |>
+  plot_stack() + 
+  scale_fill_uwb("bi", n = 3)
 ```
 
 ### Option `add_na`
 
-This option adds a grey color at the end of the scale for NA answers that are named factor levels. Real NA values are plotted as grey by default. But when we give them a name (e.g. "Don't know"), we want them to be grey instead of a color from the palette.
-
-```{r echo=TRUE, warning=FALSE, results='hide'}
-ggplot(ex_long, aes(x = fak, y = pct, fill = typ)) +
-  geom_col(position = position_dodge(width = 0.85), width = 0.85, color = "white") +
-  scale_fill_uwb("quali", add_na = TRUE) +
-  labs(x = "", y = "%", fill = "")
-```
+If `TRUE` this option adds a grey color at the end of the scale for NA answers that are named factor levels. Real NA values are plotted as grey by default. But when we give them a name (e.g. "Don't know"), we want them to be grey instead of a color from the palette.
 
 
-
-### Function `uwb_palettes()`
+## Custom pallettes - function `uwb_palettes()`
 
 `uwb_palettes()` is used inside the `scale_fill/color_uwb()` functions and can also be called separately. For instance when creating asymmetric gradients with several levels of agreement and a definitive disagreement.
