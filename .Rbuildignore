@@ -13,3 +13,4 @@
 ^\.Rprofile$
 ^quarto-temp$
 ^tests/README\.md$
+^CONTRIBUTING\.md$

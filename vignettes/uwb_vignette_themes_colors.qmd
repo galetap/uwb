@@ -64,18 +64,17 @@ The UWB theme is applied automatically by the package's `plot_*()` functions, so
 
 ```{r echo=TRUE, warning=FALSE, results='hide'}
 # Bar plot of a single categorical variable (uses the theme internally)
-prep_single(example_data, fak) |>
-  #mutate(title = "Distribution by faculty") |>
-  plot_bar()
+prep_single(example_data, fak) |>  plot_bar()
 ```
 
 You can call the themes in manually coded plots.
 
 ```{r echo=TRUE, warning=FALSE, results='hide'}
-# Bar plot of a single categorical variable (uses the theme internally)
-example_data, fak) |>
-  #mutate(title = "Distribution by faculty") |>
-  plot_bar()
+# Manually coded bar plot with the UWB theme applied directly
+ggplot(example_data, aes(x = fak)) +
+  geom_bar(fill = c_zcu) +
+  labs(x = "", y = "Count") +
+  theme_uwb()
 ```
 
 ## Color and Fill scales

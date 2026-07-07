@@ -28,7 +28,7 @@ The `uwb` package provides a set of objects, functions, themes, and color palett
 -   **Theme** — `theme_uwb()` and `theme_uwb_horiz()` for a consistent visual style
 -   **Color scales** — `scale_fill_uwb()` and `scale_color_uwb()` with built-in UWB color palettes
 
-Dedicated vignettes cover themes and colors (*UWB theme and colors*) and data preparation and plot functions (*Data preparation and plotting*) in detail. This vignette focuses on installation, built-in objects, and the general workflow.
+Dedicated vignettes cover data preparation and plot functions (*Data preparation and plotting*) and themes and colors (*UWB theme and colors*) in detail. This vignette focuses on installation, built-in objects, and the general workflow.
 
 # Installation
 
@@ -36,15 +36,15 @@ Dedicated vignettes cover themes and colors (*UWB theme and colors*) and data pr
 # Install remotes if you don't have it yet
 install.packages("remotes")
 
-# Install galetap/uwb from GitHub
-remotes::install_github("galetap/uwb")
+# Install package from GitHub
+# It should reinstall if already installed
+remotes::install_github("galetap/uwb", build_vignettes = TRUE)
 
-# Reinstall when the package is updated on GitHub
-remotes::install_github("galetap/uwb", force = TRUE)
+# Force reinstall if the automatic reinstall failed
+remotes::install_github("galetap/uwb", build_vignettes = TRUE, force = TRUE)
 
 # Install from a specific branch (other than master)
-remotes::install_github("galetap/uwb", ref = "Branch_name", force = TRUE)
-
+remotes::install_github("galetap/uwb", ref = "Branch_name", build_vignettes = TRUE, force = TRUE)
 ```
 
 After installation, load the package in every session:
@@ -53,9 +53,12 @@ After installation, load the package in every session:
 library(uwb)
 ```
 
+## Access vignettes
+browseVignettes("uwb")
+
 # Objects
 
-The package provides several built-in objects. After loading the package with `library(uwb)`, they are available directly in the session without any further loading step.
+The package provides several built-in objects. After loading the package, they are available directly in the session without any further loading step.
 
 ## Faculty and institute names: `faks` and `parts`
 
@@ -65,7 +68,7 @@ The package provides several built-in objects. After loading the package with `l
 faks
 ```
 
-`parts` is the equivalent for the non-faculty university institutes (e.g. NTC, UJP).
+`parts` is the equivalent for the non-faculty university institutes.
 
 ```{r}
 parts
@@ -168,7 +171,7 @@ These functions are called internally by the `prep_*()` functions but can also b
 |---|---|
 | `generate_textlabs()` | Generates text label columns (`labvar`, `pos`, `cvar_text`) from `yvar` and `n` |
 | `impute_labs()` | Imports `title`, `subtitle`, `caption`, and `lab` from a `codebook` object |
-| `polish_var()` | Wraps long labels and drops unused factor levels in a grouping variable |
+| `polish_var()` | Wraps long labels and drops unused factor levels in a grouping variable. Adds information about sample size. |
 
 ## Plot functions
 
@@ -185,7 +188,7 @@ These functions are called internally by the `prep_*()` functions but can also b
 
 ## Exploratory functions
 
-`ex1()` and `ex2()` are quick helpers for inspecting the distribution of one or two variables in a data frame during data exploration (counts and percentages printed to the console).
+`ex1()` and `ex2()` are quick helpers for inspecting the distribution of one or two variables in a data frame during data exploration.
 
 ```{r}
 ex1(example_data, fak)
@@ -218,7 +221,7 @@ prep_single(example_data, fak) |>
   plot_bar()
 ```
 
-## The use of codebook
+## The codebook object
 
 Each `prep_*()` function looks for an object named `codebook` in the calling environment and tries to import plot labels (`title`, `subtitle`, `caption`, and `lab` for batteries) from it. If no such object exists, those columns are filled with empty strings.
 
@@ -229,7 +232,7 @@ The `codebook` must be a data frame with the following columns:
 -   `lab` — short item label for battery and multiple choice questions; `NA` for other variables
 -   `title` — plot title text
 -   `subtitle` — plot subtitle text
--   `caption` — footnote text
+-   `caption` — plot footnote text
 
 The package ships with a built-in `codebook` object that provides labels for the `example_data` dataset:
 
@@ -238,5 +241,14 @@ print(codebook)
 ```
 
 Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically. Picking the data from codebook can also be done manually in custom workflows - see the *Data preparation and plotting* vignette.
+
+# Suggesting improvements
+
+The `uwb` package is under continuous development, and suggestions are welcome. The process is intentionally simple and relies only on GitHub Issues:
+
+- **Have an idea or found a bug?** Open a GitHub Issue at <https://github.com/galetap/uwb/issues>. A short title and one or two sentences are enough.
+- **Working through them.** The list of open Issues is the to-do list. When there is time, we pick an Issue and solve it, then close it.
+
+The full description of this workflow lives in [`CONTRIBUTING.md`](https://github.com/galetap/uwb/blob/master/CONTRIBUTING.md) in the package repository.
 
 

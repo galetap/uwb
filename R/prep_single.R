@@ -39,6 +39,6 @@ prep_single  <-
       single = single |> mutate(xvar = fct_reorder(xvar, -n))
     }
     single = single |>
-      mutate(subtitle = paste0("N=", nsize))
+      mutate(subtitle = paste0("N = ", nsize))
     return(single)
   }
