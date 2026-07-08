@@ -14,3 +14,4 @@
 ^quarto-temp$
 ^tests/README\.md$
 ^CONTRIBUTING\.md$
+^.*\.tar\.gz$
