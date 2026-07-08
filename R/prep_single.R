@@ -8,6 +8,7 @@
 #' @param order Reorder categories by frequency (largest first)? Default `FALSE`.
 #' @param drop_na Drop missing values of `var` before computing percentages?
 #'   Default `TRUE`.
+#' @param show_n Show "N=###" in subtitle? Default `TRUE`.
 #'
 #' @returns A tibble with one row per category (`yvar` = percentage, `n` = count,
 #'   `xvar` = plot-ready factor, plus label columns).
@@ -18,7 +19,7 @@
 #' prep_single(example_data, fak, order = TRUE)
 #'
 prep_single  <-
-  function(dat, var, order = FALSE, drop_na = TRUE){
+  function(dat, var, order = FALSE, drop_na = TRUE, show_n = TRUE){
     single = dat
     if (drop_na) {
       single = single |> tidyr::drop_na({{var}})
@@ -38,7 +39,9 @@ prep_single  <-
     if (order) {
       single = single |> mutate(xvar = fct_reorder(xvar, -n))
     }
+    if (show_n) {
     single = single |>
       mutate(subtitle = paste0("N = ", nsize))
+    }
     return(single)
-  }
+    }
