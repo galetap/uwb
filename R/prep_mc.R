@@ -51,13 +51,13 @@ prep_mc  <- function(
      mc <- mc |> dplyr::mutate(subtitle = paste0("N=", nsize))
   }
 
-  if (order) {
-    mc <- mc |>
-      dplyr::mutate(xvar_df = forcats::fct_reorder(xvar_df, -n))
-  }
-
   if ("lab" %in% names(mc)) {
     mc <- mc |> dplyr::mutate(xvar_df = lab)
+  }
+
+  if (order) {
+    mc <- mc |>
+      dplyr::mutate(xvar_df = forcats::fct_reorder(as.character(xvar_df), -n))
   }
 
   mc <- mc |>
