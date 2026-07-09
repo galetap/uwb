@@ -1,7 +1,7 @@
 #' Prepare the distribution of a battery of items by a grouping variable
 #'
 #' Adds a grouping variable to [prep_bat()]. The response value is `zvar`, the
-#' item name is `xvar`, and the grouping variable (`zzvar` / `zzvarno`) is kept
+#' item name is `xvar`, and the grouping variable (`zzvar` / `zzvar_df`) is kept
 #' for faceting. Meant for [plot_stack()] with facets.
 #'
 #' @param dat A data frame in wide format (one column per item).
@@ -12,7 +12,7 @@
 #' @param lab_total Label of the total group. Default `"ZCU"`.
 #'
 #' @returns A tibble with `yvar` (percentage per response option), `xvar` (item),
-#'   `zvar` (response value), `zzvarno` (group, for faceting), and label columns.
+#'   `zvar` (response value), `zzvar_df` (group, for faceting), and label columns.
 #' @export
 #'
 #' @examples
@@ -20,35 +20,50 @@
 #'             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
 #'             grvar = pohlavi)
 #'
-prep_bat_gr  <-
-  function(dat, vars = names(dat), grvar,
-           add_total = FALSE, lab_total = "Z\u010cU") {
-    bat = dat |>
-      select(c({{grvar}}, all_of(vars))) |>
-      pivot_longer(cols = all_of(vars)) |>
-      group_by(name, {{grvar}}) |>
-      count(value,.drop = FALSE) |>
-      mutate(yvar = n/sum(n)*100,
-             xvar = name,
-             zvar = value,
-             nsize = sum(n),
-             zzvar = paste0({{grvar}}, "\nn=", nsize),
-             zzvarno = {{grvar}},) |>
-      filter(yvar > 0) |>
-      generate_textlabs() |>
-      impute_labs() |>
-      ungroup()
-
+prep_bat_gr <- function(
+    dat, vars = names(dat), grvar,
+    add_total = FALSE, lab_total = "Z\u010cU",
+    show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
+    z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum,
+    zz_wrap = TRUE, zz_chrnum = .uwb_vals$chrnum) {
+  
+  bat <- dat 
+  
+  # Add total as a pseudo-group before the main processing
     if (add_total) {
-      total = prep_bat(dat = dat, vars = vars) |>
-        mutate(zzvarno = lab_total,
-               zzvar = paste0(lab_total, "\nn=", nsize))
-      bat = bat |> bind_rows(total)
+      total_rows <- groups |>
+        mutate({{grvar}} := lab_total)  # Create duplicate rows with total label
+      bat <- bind_rows(bat, total_rows)
     }
-
-    bat_try = try(bat |> mutate(xvar = lab), silent = TRUE) #try to rename items with lab from codebook
+  
+  bat <- bat |>
+    select(c({{grvar}}, all_of(vars))) |>
+    pivot_longer(cols = all_of(vars)) |>
+    group_by(name, {{grvar}}) |>
+    count(value,.drop = FALSE) |>
+    mutate(
+      yvar = n/sum(n)*100,
+      xvar_df = name,
+      zvar_df = value,
+      nsize = sum(n),
+      zzvar_df = {{grvar}},) |>
+      filter(yvar > 0) 
+  
+  bat_try = try(bat |> mutate(xvar_df = lab), silent = TRUE) #try to rename items with lab from codebook
     if (!inherits(bat_try, "try-error")) bat <- bat_try
+  
+  bat <- bat |> 
+    group_by(xvar_df, name) |> 
+    polish_var(var_origin = "xvar_df", var_final = "xvar",
+      wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
+    polish_var(var_origin = "zvar_df", var_final = "zvar",
+      wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) |>
+    polish_var(var_origin = "zzvar_df", var_final = "zzvar",
+      wrap = zz_wrap, chrnum = zz_chrnum, nsize = FALSE) |>
+    generate_textlabs() |>
+    impute_labs() |>
+    ungroup()
 
     return(bat)
 
-  }
+}

@@ -2,7 +2,7 @@
 #'
 #' Extends [prep_gr()] with a second grouping variable. `grvar` becomes the
 #' category axis (`xvar`), `var` becomes the stacking variable (`zvar`), and
-#' `grvar2` is kept (as `zzvarno`) for use as a facet. Meant for [plot_stack()]
+#' `grvar2` is kept (as `zzvar_df`) for use as a facet. Meant for [plot_stack()]
 #' with facets.
 #'
 #' @param dat A data frame.
@@ -16,27 +16,29 @@
 #' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
 #' @param grvar_to_x Place `grvar` on the category axis (`xvar`) and `var` as the
 #'   secondary category (`zvar`)? Default `TRUE`; set `FALSE` to swap roles.
-#' @param show_nsize Append the group size (`n=`) to the category labels?
+#' @param show_nsize Append the group size (`n=`) to the category labels (`xvar`)?
 #'   Default `TRUE`.
 #' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
 #' @param x_chrnum Characters per line when wrapping `xvar` labels.
 #' @param z_wrap Wrap long `zvar` labels onto several lines? Default `TRUE`.
 #' @param z_chrnum Characters per line when wrapping `zvar` labels.
+#' @param zz_wrap Wrap long `zzvar` labels onto several lines? Default `TRUE`.
+#' @param zz_chrnum Characters per line when wrapping `zzvar` labels.
 #'
-#' @returns A tibble with `yvar` (percentage), `xvar`, `zvar`, `zzvarno` (facet),
+#' @returns A tibble with `yvar` (percentage), `xvar`, `zvar`, `zzvar_df` (facet),
 #'   and label columns.
 #' @export
 #'
 #' @examples
 #' prep_gr2(example_data, typ, fak, pohlavi)
 #'
-prep_gr2 <-
-  function(dat, var, grvar, grvar2, drop_na = TRUE, add_total = FALSE,
-           lab_total = "Z\u010cU",
-           grvar_to_x = TRUE, show_nsize = TRUE, x_wrap = TRUE,
-           x_chrnum = .uwb_vals$chrnum,
-           z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum){
-  groups = dat
+prep_gr2 <- function(
+    dat, var, grvar, grvar2, drop_na = TRUE, add_total = FALSE, lab_total = "Z\u010cU",
+    show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
+    z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum,
+    zz_wrap = TRUE, zz_chrnum = .uwb_vals$chrnum) {
+    
+  groups <- dat
   if (drop_na) {
     groups = groups |> drop_na({{var}})
   }
@@ -48,32 +50,27 @@ prep_gr2 <-
     groups <- bind_rows(groups, total_rows)
   }
 
-  groups = groups |>
+  groups <- groups |>
     group_by({{grvar}},{{grvar2}}) |>
     count({{var}},.drop = FALSE) |>
-    mutate(yvar = n / sum(n) * 100,
-           xvar_df = {{grvar}},
-           zvar_df = {{var}},
-           zzvar_df = {{grvar2}},
-           nsize = sum(n))
-
-  # Switch the xvar and zvar if grvar_to_x is TRUE
-  if (grvar_to_x) {
-    groups <- groups |>  mutate(xvar_df = {{grvar}}, zvar_df = {{var}})
-    x_nsize =  show_nsize
-    z_nsize = FALSE # This overwrites the show_nsize option bacause it is meaningless to place nsizes when zvar is not grvar
-  } else{
-    x_nsize = FALSE
-    z_nsize = show_nsize
-  }
+    mutate(
+      yvar = n / sum(n) * 100,
+      name = names(dat |> select({{var}})),
+      nsize = sum(n), 
+      xvar_df = {{grvar}},
+      zvar_df = {{var}},
+      zzvar_df = {{grvar2}}
+    )
 
   groups = groups |>
     mutate(name = names(dat |> select({{var}}))) |>
     polish_var(var_origin = "xvar_df", var_final = "xvar",
-                    wrap = x_wrap, chrnum = x_chrnum, nsize = x_nsize) |>
+      wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
     polish_var(var_origin = "zvar_df", var_final = "zvar",
-                    wrap = z_wrap, chrnum = z_chrnum, nsize = z_nsize) |>
+      wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) |>
+    polish_var(var_origin = "zzvar_df", var_final = "zzvar",
+      wrap = zz_wrap, chrnum = zz_chrnum, nsize = FALSE) |>
     generate_textlabs() |>
     impute_labs() |>
     ungroup()
-}
+  }
