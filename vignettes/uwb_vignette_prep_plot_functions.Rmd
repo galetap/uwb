@@ -42,6 +42,8 @@ Each section pairs these with the relevant plotting functions — `plot_bar()`, 
 
 The three auxiliary helpers (`generate_textlabs()`, `impute_labs()`, `polish_var()`) that the preparation functions call internally are also described. Arguments that feed these helper functions are available in all prep_functions. They are not described repeatedly in each section but in the [auxiliary functions](#auxiliary-functions) section.
 
+All functions have data (`dat`) as the first argument. It is not repeated in the instructions below.
+
 All examples use the built-in `example_data` dataset and the built-in `codebook` (see the *Getting started with uwb* vignette for their structure, and *UWB theme and colors* for styling the resulting plots).
 
 # The structure of a prepared tibble
@@ -199,6 +201,7 @@ prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
 
 Key arguments:
 
+-   `show_n` — when `TRUE` (the default), sample size ("N=") is show in the subtitle.
 -   `vars` — the battery item columns.
 -   `drop_na` — drop missing answers before computing percentages.
 

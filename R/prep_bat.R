@@ -9,9 +9,10 @@
 #' @param vars The battery item columns. Defaults to all columns of `dat`.
 #' @param drop_na Drop missing answers before computing percentages? Default
 #'   `TRUE`.
+#' @param show_n Show "N=###" in subtitle? Default `TRUE`.
 #' @param x_wrap Wrap long item labels onto several lines? Default `TRUE`.
 #' @param x_chrnum Characters per line when wrapping item labels.
-#' @param x_nsize Append the sample size (`n=`) to item labels? Default `FALSE`.
+#' @param show_nsize Append the sample size (`n=`) to item labels? Default `FALSE`.
 #'
 #' @returns A tibble with `yvar` (percentage per response option), `xvar` (item),
 #'   `zvar` (response value), and label columns.
@@ -21,8 +22,8 @@
 #' prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
 #'
 prep_bat  <-
-  function(dat, vars = names(dat), drop_na = TRUE,
-           x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum, x_nsize = FALSE) {
+  function(dat, vars = names(dat), drop_na = TRUE, show_n = TRUE,
+           x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum, show_nsize = FALSE) {
 
   bat = dat |>
     pivot_longer(cols = all_of(vars))
@@ -30,7 +31,7 @@ prep_bat  <-
   if (drop_na) {
     bat = bat |> drop_na(value)
   }
-
+    
   bat = bat |>
     group_by(name) |>
     count(value,.drop = FALSE) |>
@@ -42,12 +43,21 @@ prep_bat  <-
     generate_textlabs() |>
     impute_labs() |>
     ungroup()
+    
+  sub_nsize <- bat$nsize |> unique()
+  if (length(sub_nsize) == 1) {
+    sub <- paste0("N=", sub_nsize)
+  } else (
+    sub <- paste("N=", min(sub_size), "--", max(sub_size))
+  )
 
   bat_try = try(bat |> mutate(xvar_df = lab), silent = TRUE) #try to rename items with lab from codebook
   if (!inherits(bat_try, "try-error")) bat <- bat_try
+    
   bat = bat |>
-    polish_var(wrap = x_wrap, chrnum = x_chrnum, nsize = x_nsize)
+    polish_var(wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |> 
+    mutate(subtitle = sub)
 
   return(bat)
 
-}
+  }
