@@ -40,7 +40,7 @@ It covers the full family of preparation functions:
 
 Each section pairs these with the relevant plotting functions — `plot_bar()`, `plot_lolli()`, `plot_stack()`, and `plot_dodge()` — and the vignette closes with a summary table mapping every preparation function to its typical plot. 
 
-The three auxiliary helpers (`generate_textlabs()`, `impute_labs()`, `polish_var()`) that the preparation functions call internally are also described.
+The three auxiliary helpers (`generate_textlabs()`, `impute_labs()`, `polish_var()`) that the preparation functions call internally are also described. Arguments that feed these helper functions are available in all prep_functions. They are not described repeatedly in each section but in the [auxiliary functions](#auxiliary-functions) section.
 
 All examples use the built-in `example_data` dataset and the built-in `codebook` (see the *Getting started with uwb* vignette for their structure, and *UWB theme and colors* for styling the resulting plots).
 
@@ -53,9 +53,10 @@ Before going through each function, it helps to understand the columns that ever
 | `yvar` | The numeric value to be plotted — a **percentage** for the `prep_*()` functions, a **mean** for the `mean_*()` functions |
 | `n` | The raw count behind each `yvar` (frequency tables only) |
 | `nsize` | The group size (the denominator of the percentage / number of valid answers) |
-| `xvar` | The category placed on the category axis (final, plot-ready factor) |
-| `zvar` | A secondary category used for stacking / grouping (grouped and battery functions) |
-| `xvar_df`, `zvar_df`| Original versions of the variables before polishing (wrap, color tags, sample size info) |
+| `xvar` | The category placed on the category axis (polished version with wrapped lines and sample size info) |
+| `zvar` | A secondary category used for stacking / grouping (polished version) |
+| `zzvar` | An additional grouping category (polished version), used mostly for facetting |
+| `xvar_df`, `zvar_df`, `zzvar_df`| Crude (default) versions of the variables before polishing |
 | `name` | The original variable name; used to match labels from the `codebook` |
 | `labvar`, `labvar_single`, `pos`, `pos_single`, `cvar_text` | Text-label content and positions, added by `generate_textlabs()` |
 | `title`, `subtitle`, `caption`, `lab` | Plot labels, added by `impute_labs()` from the `codebook` |
@@ -74,10 +75,11 @@ prep_single(example_data, fak)
 
 Key arguments:
 
--   `order` — when `TRUE`, the categories are reordered by frequency (largest first), which is convenient for ranked bar or lollipop charts.
 -   `drop_na` — when `TRUE` (the default), missing values of the variable are dropped before computing percentages.
+-   `order` — when `TRUE`, the categories are reordered by frequency (largest first), which is convenient for ranked bar or lollipop charts.
+-   `show_n` — when `TRUE` (the default), sample size ("N=") is show in the subtitle.
 
-## `plot_bar()`, `plot_lolli()` - ploting distributions of a single categorical variable
+## `plot_bar()`, `plot_lolli()` - plotting distributions of a single categorical variable
 
 The typical use of `prep_single` is to pipe the result straight into `plot_bar()` or `plot_lolli()`:
 
@@ -101,26 +103,18 @@ prep_single(example_data, fak, order = TRUE) |>
 
 ## `prep_gr()` — split by one grouping variable
 
-`prep_gr()` computes the distribution of `var` **within each level** of a grouping variable `grvar`. Percentages always sum to 100 % inside each group.
+`prep_gr()` computes the distribution of `var` within each level of a grouping variable `grvar`. Percentages always sum to 100 % inside each group.
 
 ```{r}
 prep_gr(example_data, typ, fak)
 ```
 
-Arguments:
+Key arguments:
 
 -   `add_total` — when `TRUE`, an extra pseudo-group containing all respondents is appended, labelled with `lab_total` (default `"ZČU"`). This makes it easy to compare each faculty against the university total.
 
 ```{r}
 prep_gr(example_data, typ, fak, add_total = TRUE) |> pull(xvar_df) |> unique()
-```
-
--   `show_nsize` — when `TRUE`(the default), information about the group size (`n=`) is added to the category labels (`xvar`). This information is colored according to the actual group size: grey for large enough groups, dark red for n < 30 and bright red for n < 20. To be able tp do this, the plot functions use the `element_markdown()` format of the axis text.
-
--   `x_wrap`, `x_chrnum`, `z_wrap`, `z_chrnum` — control line-wrapping of the `xvar` and `zvar` labels (see `polish_var()` below).
-
-```{r}
-prep_gr(example_data, typ, fak) |> pull(xvar) |> unique()
 ```
 
 ## `plot_stack()`,  `plot_dodge()` - plots of the grouped output
@@ -153,20 +147,17 @@ Multiple choice items are stored as a set of 0/1 (or other binary coded) columns
 
 ## `prep_mc()` — overall multiple choice distribution
 
-`prep_mc()` takes the columns of the multiple choice block in `vars` and reports, for each item, the share of respondents who selected the value given in `chosen`. With 0/1 coded items, `chosen = 1` gives the percentage who chose each option.
+`prep_mc()` takes the columns of the multiple choice block in `vars` and reports, for each item, the share of respondents who selected the value. Each row is one item; `yvar` is the percentage who chose it. When a `codebook` is available, the item labels (`lab`) are used as the category labels.
 
 ```{r}
 prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), chosen = 1)
 ```
 
-Each row is one item; `yvar` is the percentage who chose it. When a `codebook` is available, the item labels (`lab`) are used as the category labels.
+Key arguments:
 
-Arguments:
-
--   `vars` — the item columns to summarise (defaults to all columns of `dat`).
+-   `vars` — the columns that represent the possible choices (items) (defaults to all columns of `dat`).
 -   `chosen` — the value that counts as "selected".
 -   `order` — reorder items by frequency.
--   `x_wrap`, `x_chrnum`, `x_nsize` — label wrapping and whether to append `n=` to labels.
 
 Plots for single distribution are suitable for plotting the outcome:
 
@@ -206,11 +197,10 @@ A battery is a block of variables that share the same response scale, e.g. a set
 prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"))
 ```
 
-Arguments:
+Key arguments:
 
 -   `vars` — the battery item columns.
 -   `drop_na` — drop missing answers before computing percentages.
--   `x_wrap`, `x_chrnum`, `x_nsize` — label wrapping / `n=` display for the item labels.
 
 This output is designed for `plot_stack()`, which produces one stacked bar per item:
 
@@ -231,9 +221,10 @@ prep_bat_gr(example_data,
             grvar = pohlavi)
 ```
 
-Arguments:
+Key arguments:
 
-`add_total` If `TRUE` (the default) an overall group is added, labelled via `lab_total` (defaults to `ZČU`), so each group can be compared against the total.
+-   `add_total` — if `TRUE` (the default) an overall group is added, labelled via `lab_total`. 
+-   `lab_total` —  label to be used for the total. Default is `ZČU`.
 
 The outcome is suitable for a plotting single items (groups compared to each other and optionally to the total) or a facet plot.
 ```{r}
@@ -258,7 +249,7 @@ The mean function parses the item values with `readr::parse_number()`, treating 
 mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"))
 ```
 
-Arguments:
+Key arguments:
 
 -   `vars` — the numeric item columns.
 -   `round_places` — number of decimals used for the rounded label (`labvar_full`).
@@ -313,7 +304,10 @@ The preparation functions share three internal helpers. They are exported, so th
 -   `pos`, `pos_single` — the vertical position of each label.`pos_single` is placed above the bar if yvar is low (the text label would not fit into the bar)
 -   `cvar`, `cvar_text` — the color of the label, chosen for contrast against the bar in `plot_bar()`.
 
-The `round_places` argument controls the number of decimals.
+Arguments:
+
+-   `dat` — a data frame to be modified. It has to contain the yvar.
+-   `round_places` — it controls the number of decimals.
 
 ```{r}
 tibble(yvar = c(5, 42, 0.3, 88)) |>
@@ -325,6 +319,10 @@ tibble(yvar = c(5, 42, 0.3, 88)) |>
 
 `impute_labs()` looks for a `codebook` object in the environment and joins its `title`, `subtitle`, `caption`, `label`, and `lab` columns onto the data by the `name` column. If no `codebook` is found, those columns are added as empty strings. Every `prep_*()` and `mean_*()` function calls it automatically, which is why prepared data already carry plot titles when a codebook is available.
 
+Arguments:
+
+-   `dat` — a data frame to be modified.
+
 ```{r}
 tibble(name = c("num1", "pohlavi")) |>
   impute_labs() |> 
@@ -333,20 +331,33 @@ tibble(name = c("num1", "pohlavi")) |>
 
 ## `polish_var()` — wrap labels and append sample sizes
 
-`polish_var()` turns a "raw" category column (`var_origin`, by default `xvar_df`) into the final, plot-ready factor (`var_final`, by default `xvar`). It:
+`polish_var()` turns a "raw" category column that appears in the data into the final, plot-ready factor while preserving the original order of the values.
 
--   converts the column to a factor (if not already) while preserving the original order,
--   optionally wraps long labels onto several lines (`wrap`, with `chrnum` characters per line),
--   optionally appends the group size as `n = ...`, colour-coded by how reliable the size is (`nsize`).
+Arguments:
 
-The `x_wrap` / `x_chrnum` / `x_nsize` (and `z_*`) arguments seen throughout this vignette are passed straight to `polish_var()`.
+-   `dat` — a data frame (containing an `nsize` column to be used if the `nsize` argument is `TRUE`).
+-   `var_origin` — name of the raw category column to polish. Default `"xvar_df"`.
+-   `var_final` — name of the resulting plot-ready factor column. Default `"xvar"`.
+-   `wrap` — when `TRUE` (the default), long labels are wrapped onto several lines.
+-   `chrnum` — the number of characters per line used when wrapping labels. Default uwb_vals$chrnum
+-   `nsize` — when `TRUE` (the default), the group size (`n = ...`) is appended to each label. It is colour-coded by reliability (grey for large enough groups, dark red for n < 30, bright red for n < 20).
+
+The `x_wrap` / `x_chrnum` / `x_nsize` (and `z_*` or `zz_*` if applicable) arguments are available in all `prep_*` functions and passed straight to `polish_var()`. The default for `nsize` is `FALSE` in `prep_single` and `prep_mc` because they show the N size in the subtitle. The grouped `prep_*` have `nsize = TRUE` by default.
 
 ```{r}
+# With default arguments
 tibble(
-  xvar_df = c("A very long faculty name that needs wrapping", "A short name"),
+  xvar_df = c("A long variable name that des not fit the plot", "A short name"),
   nsize = c(15, 320)
 ) |>
-  polish_var(chrnum = 20) |> print()
+  polish_var() |> print()
+
+# With custom arguments
+tibble(
+  somevar_df = c("A long variable name that des not fit the plot", "A short name"),
+  nsize = c(15, 320)
+) |>
+  polish_var(var_origin = "somevar_df", var_final = "somevar", chrnum = 50) |> print()
 ```
 
 # Summary

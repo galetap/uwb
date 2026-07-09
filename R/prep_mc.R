@@ -12,7 +12,6 @@
 #' @param order Reorder items by frequency? Default `FALSE`.
 #' @param x_wrap Wrap long item labels onto several lines? Default `TRUE`.
 #' @param x_chrnum Characters per line when wrapping item labels.
-#' @param x_nsize Append the sample size (`n=`) to item labels? Default `TRUE`.
 #' @param show_n Show "N=###" in subtitle? Default `TRUE`.
 #'
 #' @returns A tibble with one row per item (`yvar` = percentage choosing it,
