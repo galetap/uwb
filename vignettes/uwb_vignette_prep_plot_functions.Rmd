@@ -115,19 +115,12 @@ Arguments:
 prep_gr(example_data, typ, fak, add_total = TRUE) |> pull(xvar_df) |> unique()
 ```
 
--   `show_nsize` — when `TRUE`(the default), information about the group size (`n=`) is added to the category labels. This information is colored according to the actual group size: grey for large enough groups, dark red for n < 30 and bright red for n < 20. To be able tp do this, the plot functions use the `element_markdown()` format of the axis text.
-
-```{r}
-prep_gr(example_data, typ, fak) |> pull(xvar) |> unique()
-```
+-   `show_nsize` — when `TRUE`(the default), information about the group size (`n=`) is added to the category labels (`xvar`). This information is colored according to the actual group size: grey for large enough groups, dark red for n < 30 and bright red for n < 20. To be able tp do this, the plot functions use the `element_markdown()` format of the axis text.
 
 -   `x_wrap`, `x_chrnum`, `z_wrap`, `z_chrnum` — control line-wrapping of the `xvar` and `zvar` labels (see `polish_var()` below).
 
--   `grvar_to_x` — when `TRUE`(the default) the grouping variable is placed on the category axis (`xvar`) and the variable of interest becomes the secondary category (`zvar`) to be mapped to fill color when stacking or dodging bars. Set `grvar_to_x = FALSE` to swap the roles. 
 ```{r}
 prep_gr(example_data, typ, fak) |> pull(xvar) |> unique()
-
-prep_gr(example_data, typ, fak, grvar_to_x = FALSE) |> pull(xvar) |> unique()
 ```
 
 ## `plot_stack()`,  `plot_dodge()` - plots of the grouped output

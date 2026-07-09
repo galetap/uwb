@@ -12,8 +12,6 @@
 #' @param add_total Append a pseudo-group containing all respondents for
 #'   comparison against the total? Default `FALSE`.
 #' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
-#' @param grvar_to_x Place `grvar` on the category axis (`xvar`) and `var` as the
-#'   secondary category (`zvar`)? Default `TRUE`; set `FALSE` to swap roles.
 #' @param show_nsize Append the group size (`n=`) to the category labels?
 #'   Default `TRUE`.
 #' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
@@ -31,7 +29,7 @@
 #'
 prep_gr <-
   function(dat, var, grvar, drop_na = TRUE, add_total = FALSE, lab_total = "Z\u010cU",
-           grvar_to_x = TRUE, show_nsize = TRUE,
+           show_nsize = TRUE, 
            x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
            z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum) {
 
@@ -60,23 +58,13 @@ prep_gr <-
       ) |>
       filter(n > 0)
 
-    # Switch the xvar and zvar if grvar_to_x is TRUE
-    if (grvar_to_x) {
-      groups <- groups |>  mutate(xvar_df = {{grvar}}, zvar_df = {{var}})
-      x_nsize =  show_nsize
-      z_nsize = FALSE # This overwrites the show_nsize option bacause it is meaningless to place nsizes when zvar is not grvar
-    } else{
-      x_nsize = FALSE
-      z_nsize = show_nsize
-    }
-
     groups = groups |>
       ungroup() |>
       group_by(xvar_df) |>
       polish_var(var_origin = "xvar_df", var_final = "xvar",
-                      wrap = x_wrap, chrnum = x_chrnum, nsize = x_nsize) |>
+        wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
       polish_var(var_origin = "zvar_df", var_final = "zvar",
-                      wrap = z_wrap, chrnum = z_chrnum, nsize = z_nsize) |>
+        wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) |>
       generate_textlabs() |>
       impute_labs() |>
       ungroup()
