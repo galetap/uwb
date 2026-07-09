@@ -52,13 +52,13 @@ Default \code{TRUE}.}
 \item{z_chrnum}{Characters per line when wrapping \code{zvar} labels.}
 }
 \value{
-A tibble with \code{yvar} (percentage), \code{xvar}, \code{zvar}, \code{zzvarno} (facet),
+A tibble with \code{yvar} (percentage), \code{xvar}, \code{zvar}, \code{zzvar_df} (facet),
 and label columns.
 }
 \description{
 Extends \code{\link[=prep_gr]{prep_gr()}} with a second grouping variable. \code{grvar} becomes the
 category axis (\code{xvar}), \code{var} becomes the stacking variable (\code{zvar}), and
-\code{grvar2} is kept (as \code{zzvarno}) for use as a facet. Meant for \code{\link[=plot_stack]{plot_stack()}}
+\code{grvar2} is kept (as \code{zzvar_df}) for use as a facet. Meant for \code{\link[=plot_stack]{plot_stack()}}
 with facets.
 }
 \examples{

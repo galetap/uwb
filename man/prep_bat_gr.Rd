@@ -26,11 +26,11 @@ prep_bat_gr(
 }
 \value{
 A tibble with \code{yvar} (percentage per response option), \code{xvar} (item),
-\code{zvar} (response value), \code{zzvarno} (group, for faceting), and label columns.
+\code{zvar} (response value), \code{zzvar_df} (group, for faceting), and label columns.
 }
 \description{
 Adds a grouping variable to \code{\link[=prep_bat]{prep_bat()}}. The response value is \code{zvar}, the
-item name is \code{xvar}, and the grouping variable (\code{zzvar} / \code{zzvarno}) is kept
+item name is \code{xvar}, and the grouping variable (\code{zzvar} / \code{zzvar_df}) is kept
 for faceting. Meant for \code{\link[=plot_stack]{plot_stack()}} with facets.
 }
 \examples{
