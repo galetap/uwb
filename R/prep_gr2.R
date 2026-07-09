@@ -14,8 +14,6 @@
 #' @param add_total Append a pseudo-group containing all respondents? Default
 #'   `FALSE`.
 #' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
-#' @param grvar_to_x Place `grvar` on the category axis (`xvar`) and `var` as the
-#'   secondary category (`zvar`)? Default `TRUE`; set `FALSE` to swap roles.
 #' @param show_nsize Append the group size (`n=`) to the category labels (`xvar`)?
 #'   Default `TRUE`.
 #' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.

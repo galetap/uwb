@@ -234,8 +234,7 @@ The outcome is suitable for a plotting single items (groups compared to each oth
 prep_bat_gr(example_data |> drop_na(pohlavi),
             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
             grvar = pohlavi) |> 
-  plot_stack() + facet_wrap(~ zzvar)  
-
+  plot_stack() + facet_wrap(~ zzvar, scales = "free_y")  
 ```
 
 # Mean scores
@@ -361,6 +360,16 @@ tibble(
   nsize = c(15, 320)
 ) |>
   polish_var(var_origin = "somevar_df", var_final = "somevar", chrnum = 50) |> print()
+
+# Changing the parameter from a prep_function
+# show_nsize modifies the nsize parameter
+# prep_bat_gr allow adding sample size to zzvar, too (it is the only function that does this)
+prep_bat_gr(example_data |> drop_na(pohlavi),
+            vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
+            grvar = pohlavi, show_nsize = FALSE, show_nsize_zzvar = TRUE) |> 
+  plot_stack() + facet_wrap(~ zzvar, scales = "free_y") 
+
+
 ```
 
 # Summary

@@ -10,7 +10,17 @@
 #' @param add_total Append an overall ("ZCU") group for comparison? Default
 #'   `FALSE`.
 #' @param lab_total Label of the total group. Default `"ZCU"`.
-#'
+#' @param show_nsize Append the group size (`n=`) to the category labels (`xvar`)?
+#'   Default `TRUE`.
+#' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
+#' @param x_chrnum Characters per line when wrapping `xvar` labels.
+#' @param z_wrap Wrap long `zvar` labels onto several lines? Default `TRUE`.
+#' @param z_chrnum Characters per line when wrapping `zvar` labels.
+#' @param show_nsize_zzvar Append the group size (`n=`) to the facet labels (`zzvar`)?
+#'   Default `TRUE`.
+#' @param zz_wrap Wrap long `zzvar` labels onto several lines? Default `TRUE`.
+#' @param zz_chrnum Characters per line when wrapping `zzvar` labels.
+#' 
 #' @returns A tibble with `yvar` (percentage per response option), `xvar` (item),
 #'   `zvar` (response value), `zzvar_df` (group, for faceting), and label columns.
 #' @export
@@ -25,7 +35,7 @@ prep_bat_gr <- function(
     add_total = FALSE, lab_total = "Z\u010cU",
     show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
     z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum,
-    zz_wrap = TRUE, zz_chrnum = .uwb_vals$chrnum) {
+    show_nsize_zzvar = FALSE, zz_wrap = TRUE, zz_chrnum = .uwb_vals$chrnum) {
   
   bat <- dat 
   
@@ -58,10 +68,17 @@ prep_bat_gr <- function(
       wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
     polish_var(var_origin = "zvar_df", var_final = "zvar",
       wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) |>
-    polish_var(var_origin = "zzvar_df", var_final = "zzvar",
-      wrap = zz_wrap, chrnum = zz_chrnum, nsize = FALSE) |>
     generate_textlabs() |>
     impute_labs() |>
+    ungroup()
+
+  bat <- bat |> 
+    rename(nsize_x = nsize) |> 
+    group_by(zzvar_df) |> 
+    mutate(nsize = sum(n)) |> 
+    polish_var(var_origin = "zzvar_df", var_final = "zzvar",
+      wrap = zz_wrap, chrnum = zz_chrnum, nsize = show_nsize_zzvar) |>
+    rename(nsize_z = nsize) |> 
     ungroup()
 
     return(bat)
