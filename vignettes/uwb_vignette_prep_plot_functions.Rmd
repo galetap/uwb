@@ -113,7 +113,8 @@ prep_gr(example_data, typ, fak)
 
 Key arguments:
 
--   `add_total` — when `TRUE`, an extra pseudo-group containing all respondents is appended, labelled with `lab_total` (default `"ZČU"`). This makes it easy to compare each faculty against the university total.
+-   `add_total` — if `TRUE` (the default) an overall group is added. 
+-   `lab_total` —  label to be used for the total. Default is `ZČU`.
 
 ```{r}
 prep_gr(example_data, typ, fak, add_total = TRUE) |> pull(xvar_df) |> unique()
@@ -180,12 +181,27 @@ prep_mc(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
 `prep_mc_gr()` computes the same selection percentages within each level of a grouping variable. The grouping variable goes on the category axis; the items become the secondary category (`zvar`).
 
 ```{r}
-prep_mc_gr(example_data,
-           vars = c("mc1", "mc2", "mc3", "mc4", "mc5"),
-           grvar = fak, chosen = 1)
+prep_mc_gr(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), grvar = fak, chosen = 1)
 ```
 
-As with `prep_gr()`, `add_total = TRUE` appends an overall column for comparison, and the wrapping arguments behave the same way.
+Key arguments:
+
+-   `vars`, `chosen`, `drop_na` — same as in `prep_mc`.
+-   `add_total` — if `TRUE` (the default) an overall group is added. 
+-   `lab_total` —  label to be used for the total. Default is `ZČU`.
+
+It is usually paired with dodge plot or facetting to compare how often each item was chosen across subgroups. The nsize is shown for the groups (the `zvar`).
+
+```{r}
+# Dodge plot fits without changes
+prep_mc_gr(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), grvar = fak, chosen = 1) |> 
+  plot_dodge() 
+
+# Facet plot needs renaming the variables to put grouping var (xvar) in the facets
+prep_mc_gr(example_data, vars = c("mc1", "mc2", "mc3", "mc4", "mc5"), grvar = fak, chosen = 1) |> 
+  rename(xvar = zvar, zvar = xvar) |> 
+  plot_bar() + facet_wrap(~ zvar)
+```
 
 # Batteries of categorical items
 
@@ -207,6 +223,8 @@ Key arguments:
 
 This output is designed for `plot_stack()`, which produces one stacked bar per item:
 
+
+
 ```{r warning=FALSE}
 prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5")) |>
   plot_stack()
@@ -226,7 +244,7 @@ prep_bat_gr(example_data,
 
 Key arguments:
 
--   `add_total` — if `TRUE` (the default) an overall group is added, labelled via `lab_total`. 
+-   `add_total` — if `TRUE` (the default) an overall group is added. 
 -   `lab_total` —  label to be used for the total. Default is `ZČU`.
 
 The outcome is suitable for a plotting single items (groups compared to each other and optionally to the total) or a facet plot.
@@ -274,7 +292,10 @@ mean_bat_gr(example_data,
             grvar = fak)
 ```
 
-`add_total = TRUE` appends an overall group (labelled with `lab_total`), which is handy for showing every faculty next to the university mean.
+Key arguments:
+
+-   `add_total` — if `TRUE` (the default) an overall group is added. 
+-   `lab_total` —  label to be used for the total. Default is `ZČU`.
 
 ```{r}
 mean_bat_gr(example_data,
