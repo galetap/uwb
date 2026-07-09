@@ -253,7 +253,7 @@ print(codebook)
 
 Once `codebook` exists in the environment, the `prep_*()` functions pick it up automatically. Picking the data from codebook can also be done manually in custom workflows - see the *Data preparation and plotting* vignette.
 
-# Suggesting improvements
+# Package development
 
 The `uwb` package is under continuous development, and suggestions are welcome. The process is intentionally simple and relies only on GitHub Issues:
 
@@ -261,3 +261,8 @@ The `uwb` package is under continuous development, and suggestions are welcome. 
 - **Working through them.** The list of open Issues is the to-do list. When there is time, we pick an Issue and solve it, then close it.
 
 The full description of this workflow lives in [`CONTRIBUTING.md`](https://github.com/galetap/uwb/blob/master/CONTRIBUTING.md) in the package repository.
+
+## Testing changes 
+When working on the package, use `devtools::load_all()` to test changes to functions without committing or reinstalling. It loads all functions from the `R/` directory — including uncommitted edits — into the current session. Re-run it after each edit.
+
+
