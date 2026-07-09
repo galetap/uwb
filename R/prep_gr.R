@@ -12,7 +12,7 @@
 #' @param add_total Append a pseudo-group containing all respondents for
 #'   comparison against the total? Default `FALSE`.
 #' @param lab_total Label of the total pseudo-group. Default `"ZCU"`.
-#' @param show_nsize Append the group size (`n=`) to the category labels?
+#' @param show_nsize Append the group size (`n=`) to the category labels ('xvar')?
 #'   Default `TRUE`.
 #' @param x_wrap Wrap long `xvar` labels onto several lines? Default `TRUE`.
 #' @param x_chrnum Characters per line when wrapping `xvar` labels.
@@ -27,11 +27,10 @@
 #' prep_gr(example_data, typ, fak)
 #' prep_gr(example_data, typ, fak, add_total = TRUE)
 #'
-prep_gr <-
-  function(dat, var, grvar, drop_na = TRUE, add_total = FALSE, lab_total = "Z\u010cU",
-           show_nsize = TRUE, 
-           x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
-           z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum) {
+prep_gr <-function(
+    dat, var, grvar, drop_na = TRUE, add_total = FALSE, lab_total = "Z\u010cU",
+    show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
+    z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum) {
 
     groups <- dat
 
@@ -52,13 +51,13 @@ prep_gr <-
       mutate(
         yvar = n/sum(n)*100,
         name = names(dat |> select({{var}})),
-        nsize = sum(n), # Data are grouped by grvar at this point
-        xvar_df = {{var}},
-        zvar_df = {{grvar}}
+        nsize = sum(n), 
+        xvar_df = {{grvar}},
+        zvar_df = {{var}}
       ) |>
       filter(n > 0)
 
-    groups = groups |>
+    groups <- groups |>
       ungroup() |>
       group_by(xvar_df) |>
       polish_var(var_origin = "xvar_df", var_final = "xvar",

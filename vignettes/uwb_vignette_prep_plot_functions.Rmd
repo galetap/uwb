@@ -342,7 +342,7 @@ Arguments:
 -   `chrnum` — the number of characters per line used when wrapping labels. Default uwb_vals$chrnum
 -   `nsize` — when `TRUE` (the default), the group size (`n = ...`) is appended to each label. It is colour-coded by reliability (grey for large enough groups, dark red for n < 30, bright red for n < 20).
 
-The `x_wrap` / `x_chrnum` / `x_nsize` (and `z_*` or `zz_*` if applicable) arguments are available in all `prep_*` functions and passed straight to `polish_var()`. The default for `nsize` is `FALSE` in `prep_single` and `prep_mc` because they show the N size in the subtitle. The grouped `prep_*` have `nsize = TRUE` by default.
+The `x_wrap` / `x_chrnum` / `x_nsize` (and `z_*` or `zz_*` if applicable) arguments are available in all `prep_*` functions and passed straight to `polish_var()`. The default for `nsize` is `FALSE` in `prep_single` and `prep_mc` because they show the N size in the subtitle. The grouped `prep_*` have `nsize = TRUE` by default. The `zvar` and `zzvar` do not show nsize. If desired, it has to be changes manually after calling the `prep_*` function.
 
 ```{r}
 # With default arguments

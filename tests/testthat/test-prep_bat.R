@@ -26,12 +26,12 @@ test_that("prep_bat has one row per item x response option", {
 test_that("prep_bat_gr keeps the grouping variable for faceting", {
   out <- prep_bat_gr(example_data, vars = bat_vars, grvar = pohlavi)
   expect_s3_class(out, "tbl_df")
-  expect_true(all(c("xvar", "zvar", "yvar", "zzvarno") %in% names(out)))
+  expect_true(all(c("xvar", "zvar", "yvar", "zzvar") %in% names(out)))
 })
 
 test_that("prep_bat_gr percentages sum to 100 within each item x group", {
   out <- prep_bat_gr(example_data, vars = bat_vars, grvar = pohlavi)
-  sums <- tapply(out$yvar, interaction(out$xvar, out$zzvarno, drop = TRUE), sum)
+  sums <- tapply(out$yvar, interaction(out$xvar, out$zzvar, drop = TRUE), sum)
   expect_true(all(abs(sums - 100) < 1e-6))
 })
 
@@ -39,5 +39,5 @@ test_that("prep_bat_gr add_total = TRUE appends an overall group", {
   base  <- prep_bat_gr(example_data, vars = bat_vars, grvar = pohlavi)
   total <- prep_bat_gr(example_data, vars = bat_vars, grvar = pohlavi,
                        add_total = TRUE)
-  expect_gt(dplyr::n_distinct(total$zzvarno), dplyr::n_distinct(base$zzvarno))
+  expect_gt(dplyr::n_distinct(total$zzvar), dplyr::n_distinct(base$zzvar))
 })
