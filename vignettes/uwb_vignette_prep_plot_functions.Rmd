@@ -95,15 +95,19 @@ prep_single(example_data, fak, order = TRUE) |>
   plot_lolli()
 ```
 
-By default, `plot_bar()` and `plot_lolli()` produce a horizontal bar chart. Set `horiz = FALSE` for a vertical chart:
+
+Key argument:
+
+-   `horiz` — when `TRUE` (the default), the categories are plotted on the vertical axis. 
+
+Horizontal plots are especially useful if the number of 'xvar' values is large or if the names into onto several lines. It is easier to expand the height of the plot than its width. Vertical plot is fine when the labels are short.
 
 ```{r echo=TRUE, warning=FALSE}
 prep_single(example_data, fak, order = TRUE) |>
   plot_bar(horiz = FALSE)
 ```
 
-
-## `prep_gr()` — split by one grouping variable
+## `prep_gr()`, `prep_gr2()` — split by one or two grouping variables
 
 `prep_gr()` computes the distribution of `var` within each level of a grouping variable `grvar`. Percentages always sum to 100 % inside each group.
 
@@ -120,29 +124,41 @@ Key arguments:
 prep_gr(example_data, typ, fak, add_total = TRUE) |> pull(xvar_df) |> unique()
 ```
 
-## `plot_stack()`,  `plot_dodge()` - plots of the grouped output
+`prep_gr2()` extends `prep_gr()` with a second grouping variable `grvar2`. The first grouping variable (`grvar`) becomes the category axis, `var` becomes the stacking/dodging variable, and `grvar2` is kept as `zzvar` for use as a facet. It accepts the same arguments as `prep_gr()`.
 
-The grouped output is meant for `plot_stack()` or `plot_dodge()`:
+The grouped output is meant for `plot_stack()` or `plot_dodge()`.
+
+## `plot_stack()` 
 
 ```{r warning=FALSE}
 prep_gr(example_data, pohlavi, fak, add_total = TRUE) |>
   plot_stack()
 ```
 
+Key arguments:
+
+-   `horiz` — if `TRUE` (the default) categories are plotted on the vertical axis.
+-   `lab_min` — Minimum slice size (percentage) below which the label is suppressed (set to `NA`). Default `.uwb_vals$lim_stack_no`.
+
+Customizing is the `lab_min` is useful in facet plots or when the category labels are long and the stacked bars get squeezed more than usual.
+
+```{r}
+prep_gr2(example_data, pohlavi, fak, typ) |> 
+  filter(!is.na(pohlavi)) |> 
+  plot_stack(lab_min = 10) + facet_wrap(~ zzvar, scales = "free_y")
+```
+
+## `plot_dodge()` 
+
 ```{r warning=FALSE}
 prep_gr(example_data, pohlavi, fak) |>
   plot_dodge()
 ```
 
-## `prep_gr2()` — split by two grouping variables
+Key argument:
 
-`prep_gr2()` extends `prep_gr()` with a second grouping variable `grvar2`. The first grouping variable (`grvar`) becomes the category axis, `var` becomes the stacking/dodging variable, and `grvar2` is kept as `zzvar` for use as a facet. It accepts the same arguments as `prep_gr()`.
+-   `horiz` — if `TRUE` (the default) categories are plotted on the vertical axis.
 
-```{r}
-prep_gr2(example_data, pohlavi, fak, typ) |> 
-  filter(!is.na(pohlavi)) |> 
-  plot_stack() + facet_wrap(~ typ, scales = "free_y")
-```
 
 # Multiple choice questions
 
@@ -190,7 +206,7 @@ Key arguments:
 -   `add_total` — if `TRUE` (the default) an overall group is added. 
 -   `lab_total` — label to be used for the total. Default is `ZČU`.
 
-It is usually paired with dodge plot or facetting to compare how often each item was chosen across subgroups. The nsize is shown for the groups (the `zvar`).
+It is usually paired with dodge plot or facetting to compare how often each item was chosen across subgroups. The `nsize` is shown for the groups (the `zvar`).
 
 ```{r}
 # Dodge plot fits without changes
@@ -223,14 +239,12 @@ Key arguments:
 
 This output is designed for `plot_stack()`, which produces one stacked bar per item:
 
-
-
 ```{r warning=FALSE}
 prep_bat(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5")) |>
   plot_stack()
 ```
 
-*Note: this is not a suitable color pallette for degree of agreement. The use of alternative pallettes is explained in the *UWB theme and colorsv ignette.* 
+*Note: this is not a suitable color pallette for degree of agreement. The use of alternative pallettes is explained in the *UWB theme and colors vignette.* 
 
 ## `prep_bat_gr()` — battery split by a grouping variable
 
@@ -266,7 +280,7 @@ The mean function parses the item values with `readr::parse_number()`, treating 
 
 ## `mean_bat()` — means of a battery
 
-`mean_bat()` returns the mean (and sample size) of each numeric item in `vars`.
+`mean_bat()` returns the mean of each numeric item in `vars`. It works with single item, as well.
 
 ```{r}
 mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"))
@@ -277,15 +291,23 @@ Key arguments:
 -   `vars` — the numeric item columns.
 -   `round_places` — number of decimals used for the rounded label (`labvar_full`).
 -   `na_lab` — character values to treat as missing when parsing numbers.
+-   `order` — when `TRUE`, the categories are reordered by frequency (largest first).
 
-The result pairs naturally with `plot_lolli()` or `plot_bar()`:
+The result pairs with `plot_lolli()` or `plot_bar()`:
 
 ```{r warning=FALSE}
+# Default settings
 mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5")) |>
-  plot_lolli()
+  plot_bar()
+
+# Customised
+mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), 
+  order = TRUE, show_n = FALSE, round_places = 1) |>
+  plot_bar()
+
 ```
 
-## `mean_bat_gr()` — means by one grouping variable
+## `mean_bat_gr()`, `mean_bat_gr2()` — means by one or two grouping variables
 
 `mean_bat_gr()` computes item means within each level of a grouping variable. The grouping variable becomes the category axis (`xvar`, optionally with `n=` appended), and the item name becomes the secondary category (`zvar`).
 
@@ -307,8 +329,7 @@ mean_bat_gr(example_data,
 ```
 
 
-
-## `mean_bat_gr2()` — means by two grouping variables
+##  — means by two grouping variables
 
 `mean_bat_gr2()` adds a second grouping variable. The first grouping variable (`grvar`) becomes `xvar`, the second (`grvar2`) becomes `zvar`, and item means are computed for every combination.
 
@@ -317,6 +338,9 @@ mean_bat_gr2(example_data,
              vars = c("num1", "num2", "num3", "num4", "num5"),
              grvar = fak, grvar2 = pohlavi)
 ```
+
+
+
 
 # Auxiliary functions
 

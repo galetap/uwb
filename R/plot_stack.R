@@ -9,7 +9,7 @@
 #' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
 #'   chart.
 #' @param lab_min Minimum slice size (percentage) below which the label is
-#'   suppressed (set to `NA`). Default `.uwb_vals$lim_stack_no`.
+#'   suppressed (set to `NA`). 
 #'
 #' @returns A ggplot object (also printed).
 #' @export
