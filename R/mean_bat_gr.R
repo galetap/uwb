@@ -39,7 +39,7 @@ mean_bat_gr <-
       group_by(name, {{grvar}}) |>
       summarise(yvar = mean(value_num, na.rm = T),
                 nsize = n()) |>
-      mutate(labvar_full = round(yvar, round_places),
+      mutate(labvar = round(yvar, round_places),
              xvar = paste0({{grvar}}, "\nn = ", nsize),
              xvar_df = {{grvar}},
              zvar = name) |>
@@ -49,7 +49,7 @@ mean_bat_gr <-
     if (add_total) {
       total = mean_bat(dat = dat, vars = vars, round_places = round_places,
                        na_lab = na_lab) |>
-        #select(xvar, yvar, nsize, labvar_full) |>
+        #select(xvar, yvar, nsize, labvar) |>
         mutate(zvar = xvar,
                xvar = as.factor(paste0(lab_total, "\nN=", nsize)),
                xvar_df = lab_total)

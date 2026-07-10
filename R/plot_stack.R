@@ -8,6 +8,8 @@
 #'   `zvar`, `labvar`, `pos`, `title`, `subtitle`, `caption`.
 #' @param horiz `TRUE` for a horizontal chart (default), `FALSE` for a vertical
 #'   chart.
+#' @param lab_min Minimum slice size (percentage) below which the label is
+#'   suppressed (set to `NA`). Default `.uwb_vals$lim_stack_no`.
 #'
 #' @returns A ggplot object (also printed).
 #' @export
@@ -16,7 +18,7 @@
 #' prep_gr(example_data, typ, fak, add_total = TRUE) |> plot_stack()
 #'
 plot_stack  <-
-  function(dat, horiz = TRUE){
+  function(dat, horiz = TRUE, lab_min = .uwb_vals$lim_stack_no){
   if (horiz){
     dat = dat |>
       mutate(xvar = fct_rev(xvar))
@@ -26,7 +28,8 @@ plot_stack  <-
              linewidth = 0.5 * .uwb_vals$linesize,
              position = position_stack(reverse = TRUE)) +
     scale_fill_uwb("quali") +
-    geom_text(aes(x = fct_rev(xvar), y = pos, label = labvar),
+    geom_text(aes(x = fct_rev(xvar), y = pos,
+                  label = ifelse(abs(yvar) < lab_min, NA, as.character(labvar))),
               colour = "white",
               size = .uwb_vals$labsize) +
     ylim(0, 100.1) + # Slightly more than 100 to make sure all values are shown

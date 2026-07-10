@@ -36,7 +36,7 @@ mean_bat_gr2  <-
                 nsize = n()) |>
       ungroup() |>
       impute_labs() |>
-      mutate(labvar_full = round(yvar, round_places),
+      mutate(labvar = round(yvar, round_places),
              xvar = paste0({{grvar}}, "\nn=", nsize),
              zvar = {{grvar2}}
       )

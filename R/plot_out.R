@@ -8,7 +8,7 @@
 #' colour scheme is `faks`.
 #'
 #' @param dat A prepared data frame. Must include the columns `xvar`, `yvar`,
-#'   `zvar`, `zvar_df`, `labvar_full`, `title`, `subtitle`, `caption`.
+#'   `zvar`, `zvar_df`, `labvar`, `title`, `subtitle`, `caption`.
 #' @param horiz `TRUE` for a horizontal chart, `FALSE` for a vertical chart
 #'   (default).
 #' @param total Label of the total group (level of `zvar_df`). Default `"ZCU"`.
@@ -43,9 +43,9 @@ plot_out  <-
                                yvar[zvar_df == total], NA)),
       yvar_show = case_when(zvar_df != total & diff > out ~ yvar),
       yvar_shadow = case_when(zvar_df != total & diff <= out ~ yvar),
-      labvar_show = case_when(zvar_df != total & diff > out ~ labvar_full),
+      labvar_show = case_when(zvar_df != total & diff > out ~ labvar),
       yvar_total = case_when(zvar_df == total ~ yvar),
-      labvar_total = case_when(zvar_df == total ~ labvar_full)
+      labvar_total = case_when(zvar_df == total ~ labvar)
     ) |>
     group_by(xvar) |>
     mutate(

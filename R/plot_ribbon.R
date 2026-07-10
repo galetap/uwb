@@ -11,12 +11,15 @@
 #'   scale.
 #' @param margin Right-hand margin (and label wrapping width) reserved for the
 #'   ribbon-end annotations. Default `15`.
+#' @param lab_min Minimum ribbon size (percentage) below which the label is
+#'   suppressed (set to `NA`). Default `.uwb_vals$lim_stack_no`.
 #'
 #' @returns A ggplot object.
 #' @export
 #'
 plot_ribbon <-
-  function(dat, space = 5, fill = .uwb_scales$quali, margin = 15){
+  function(dat, space = 5, fill = .uwb_scales$quali, margin = 15,
+           lab_min = .uwb_vals$lim_stack_no){
   d = dat |>
     # Special vars for ggsankey
     group_by(zvar) |>
@@ -87,7 +90,8 @@ plot_ribbon <-
   preplot +
     geom_rect(data = rib_ends, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
               fill = rib_ends$fill) +
-    geom_text(data = pos_label, aes(x = xvar, y = ypos, label = labvar),
+  geom_text(data = pos_label, aes(x = xvar, y = ypos,
+                                  label = ifelse(abs(yvar) < lab_min, NA, as.character(labvar))),
               color = "white", size = 0.85 * .uwb_vals$labsize) +
     annotate("text", x = x_len + 0.35, y = last$ypos, label = last$label,
              color = last$fill, size = .uwb_vals$labsize,

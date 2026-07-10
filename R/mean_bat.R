@@ -8,7 +8,7 @@
 #' @param dat A data frame.
 #' @param vars The numeric item columns.
 #' @param round_places Number of decimals used for the rounded label
-#'   (`labvar_full`). Default `0`.
+#'   (`labvar`). Default `0`.
 #' @param na_lab Character values to treat as missing when parsing numbers.
 #'   Default `c("NA", "Bez odpovedi")`.
 #'
@@ -36,8 +36,8 @@ mean_bat <-
     mutate(xvar = name) |>
     generate_textlabs() |>
     impute_labs() |>
-    mutate(labvar_full = round(yvar, round_places),
-           labvar_single = as.character(labvar_full)
+    mutate(labvar = round(yvar, round_places),
+           labvar_single = as.character(labvar)
     ) |>
     ungroup()
 }

@@ -4,7 +4,7 @@
 #' category axis (`xvar`) is treated as the time variable.
 #'
 #' @param dat A prepared data frame. Must include the columns `xvar` (time),
-#'   `yvar`, `labvar_full`, `title`, `subtitle`, `caption`.
+#'   `yvar`, `labvar`, `title`, `subtitle`, `caption`.
 #'
 #' @returns A ggplot object (also printed).
 #' @export
@@ -15,7 +15,7 @@ plot_trend  <- function(dat) {
     geom_line(size = 1, color = .uwb_scales$quali[1]) +
     geom_point(size = .uwb_vals$pointsize,
                color = .uwb_scales$quali[1]) +
-    geom_text(aes(label = labvar_full),
+    geom_text(aes(label = labvar),
               color = "white",
               size = .uwb_vals$labsize) +
     labs(y = "", x = "", fill = "",

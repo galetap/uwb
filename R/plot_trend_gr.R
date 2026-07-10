@@ -4,7 +4,7 @@
 #' (`xvar`) is the time variable and `zvar` defines the groups (one line each).
 #'
 #' @param dat A prepared data frame. Must include the columns `xvar` (time),
-#'   `yvar`, `zvar` (group), `labvar_full`, `title`, `subtitle`, `caption`.
+#'   `yvar`, `zvar` (group), `labvar`, `title`, `subtitle`, `caption`.
 #' @param total Optional name of the group (level of `zvar`) to emphasise with
 #'   larger points (e.g. the overall total).
 #' @param add_points Add points and value labels on top of the lines? Default
@@ -37,7 +37,7 @@ plot_trend_gr  <-
     if (add_points) {
       p =
         p + geom_point(size = ddat$pointsize, alpha = 0.95) +
-        geom_text(aes(label = labvar_full),
+        geom_text(aes(label = labvar),
                   color = "white", size = 0.75 * .uwb_vals$labsize,
                   check_overlap = TRUE) +
         guides(color = guide_legend(override.aes = list(size = 0.5 * .uwb_vals$pointsize)))
