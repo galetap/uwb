@@ -25,39 +25,49 @@
 #'             vars = c("num1", "num2", "num3", "num4", "num5"),
 #'             grvar = fak)
 #'
-mean_bat_gr <-
-  function(dat, vars, grvar, round_places = 0,
-           add_total = FALSE, lab_total = "Z\u010cU",
-           na_lab = c("NA", "Bez odpov\u011bd\u010fi")) {
-    means = dat |>
-      select(c({{grvar}}, all_of(vars))) |>
-      pivot_longer(cols = all_of(vars)) |>
-      mutate(value_chr = as.character(value),
-             value_chr = if_else(value_chr %in% na_lab, NA_character_, value_chr),
-             value_num = parse_number(value_chr)) |>
-      drop_na(value_num) |>
-      group_by(name, {{grvar}}) |>
-      summarise(yvar = mean(value_num, na.rm = T),
-                nsize = n()) |>
-      mutate(labvar = round(yvar, round_places),
-             xvar = paste0({{grvar}}, "\nn = ", nsize),
-             xvar_df = {{grvar}},
-             zvar = name) |>
-      ungroup() |>
-      impute_labs()
+mean_bat_gr <- function(
+    dat, vars, grvar, round_places = 0,
+    add_total = FALSE, lab_total = "Z\u010cU",
+    na_lab = c("NA", "Bez odpov\u011bd\u010fi"),
+    show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum, 
+    z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum) {
+    
+  means = dat 
+    
+  # Add total as a pseudo-group before the main processing
+  if (add_total) {
+    total_rows <- means |>
+      mutate({{grvar}} := lab_total)  # Create duplicate rows with total label
+    means <- bind_rows(means, total_rows)
+  }
+    
+  means = means |>
+    select(c({{grvar}}, all_of(vars))) |>
+    pivot_longer(cols = all_of(vars)) |>
+    mutate(
+      value_chr = as.character(value),
+      value_chr = if_else(value_chr %in% na_lab, NA_character_, value_chr),
+      value_num = parse_number(value_chr)) |>
+    drop_na(value_num) |>
+    group_by(name, {{grvar}}) |>
+    summarise(
+      yvar = mean(value_num, na.rm = T),
+      nsize = n()) |>
+    mutate(
+      labvar = round(yvar, round_places),
+      xvar_df = {{grvar}},
+      zvar_df = name
+    ) |>
+    ungroup() |>
+    impute_labs() |> 
+    generate_textlabs(round_places = round_places) 
 
-    if (add_total) {
-      total = mean_bat(dat = dat, vars = vars, round_places = round_places,
-                       na_lab = na_lab) |>
-        #select(xvar, yvar, nsize, labvar) |>
-        mutate(zvar = xvar,
-               xvar = as.factor(paste0(lab_total, "\nN=", nsize)),
-               xvar_df = lab_total)
-      means = bind_rows(means, total)
-    }
+  means_try = try(means |> mutate(zvar_df = lab), silent = TRUE) #try to rename items with lab from codebook
+  if (!inherits(means_try, "try-error")) means <- means_try
 
-    means_try = try(means |> mutate(zvar = lab), silent = TRUE) #try to rename items with lab from codebook
-    if (!inherits(means_try, "try-error")) means <- means_try
+  means <- means |>
+    polish_var(var_origin = "xvar_df", var_final = "xvar", wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |> 
+    polish_var(var_origin = "zvar_df", var_final = "zvar", wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) 
 
-    return(means)
+  return(means)
   }

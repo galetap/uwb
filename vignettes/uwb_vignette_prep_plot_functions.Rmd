@@ -128,7 +128,7 @@ prep_gr(example_data, typ, fak, add_total = TRUE) |> pull(xvar_df) |> unique()
 
 The grouped output is meant for `plot_stack()` or `plot_dodge()`.
 
-## `plot_stack()` 
+## `plot_stack()` - plot with stacked bars
 
 ```{r warning=FALSE}
 prep_gr(example_data, pohlavi, fak, add_total = TRUE) |>
@@ -148,7 +148,7 @@ prep_gr2(example_data, pohlavi, fak, typ) |>
   plot_stack(lab_min = 10) + facet_wrap(~ zzvar, scales = "free_y")
 ```
 
-## `plot_dodge()` 
+## `plot_dodge()` - plot with dodged parts
 
 ```{r warning=FALSE}
 prep_gr(example_data, pohlavi, fak) |>
@@ -158,7 +158,6 @@ prep_gr(example_data, pohlavi, fak) |>
 Key argument:
 
 -   `horiz` — if `TRUE` (the default) categories are plotted on the vertical axis.
-
 
 # Multiple choice questions
 
@@ -290,7 +289,7 @@ Key arguments:
 
 -   `vars` — the numeric item columns.
 -   `round_places` — number of decimals used for the rounded label (`labvar_full`).
--   `na_lab` — character values to treat as missing when parsing numbers.
+-   `na_lab` — character values to treat as missing when parsing numbers. Defaults to `c("NA", "Bez odpovědi")`.
 -   `order` — when `TRUE`, the categories are reordered by frequency (largest first).
 
 The result pairs with `plot_lolli()` or `plot_bar()`:
@@ -304,7 +303,6 @@ mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5")) |>
 mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), 
   order = TRUE, show_n = FALSE, round_places = 1) |>
   plot_bar()
-
 ```
 
 ## `mean_bat_gr()`, `mean_bat_gr2()` — means by one or two grouping variables
@@ -312,24 +310,14 @@ mean_bat(example_data, vars = c("num1", "num2", "num3", "num4", "num5"),
 `mean_bat_gr()` computes item means within each level of a grouping variable. The grouping variable becomes the category axis (`xvar`, optionally with `n=` appended), and the item name becomes the secondary category (`zvar`).
 
 ```{r}
-mean_bat_gr(example_data,
-            vars = c("num1", "num2", "num3", "num4", "num5"),
-            grvar = fak)
+mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = rok)
 ```
 
 Key arguments:
 
+-   `vars`, `round_places`, `na_lab` — same as `mean_bat`.
 -   `add_total` — if `TRUE` (the default) an overall group is added. 
 -   `lab_total` —  label to be used for the total. Default is `ZČU`.
-
-```{r}
-mean_bat_gr(example_data,
-            vars = c("num1", "num2", "num3", "num4", "num5"),
-            grvar = fak, add_total = TRUE)
-```
-
-
-##  — means by two grouping variables
 
 `mean_bat_gr2()` adds a second grouping variable. The first grouping variable (`grvar`) becomes `xvar`, the second (`grvar2`) becomes `zvar`, and item means are computed for every combination.
 
@@ -339,8 +327,46 @@ mean_bat_gr2(example_data,
              grvar = fak, grvar2 = pohlavi)
 ```
 
+XXX plot trend or out are typical endpoints XXX
 
+## `plot_trend`, `plot_trend_gr` - plots of numerical values over time
 
+`plot_trend()` draws a line-and-point chart where `xvar` is the time axis and `yvar` is the value — typically mean or percentage — over several time points. It has no additional arguments beyond `dat`.
+
+```{r}
+prep_gr(example_data, pohlavi, rok) |> 
+  filter(zvar_df == "Muž") |> 
+  plot_trend() + 
+    ylim(0, 100) + 
+    labs(title = "Podíl mužů mezi studujícími")
+```
+
+`plot_trend_gr()` extends this to multiple groups: `zvar` defines the groups and each gets its own line, making it straightforward to compare trends across subgroups or across indicators.
+
+```{r}
+# Compare indicators
+mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = rok, add_total = TRUE) |> 
+  plot_trend_gr()
+
+# Compare percentages (type sizes) over time
+prep_gr(example_data, typ, rok) |> 
+  plot_trend_gr()
+```
+
+Key arguments:
+
+-   `total` — optional label of the group (level of `zvar`) to be emphasized with larger points, e.g. the overall total.
+-   `add_points` — when `TRUE` (the default), points and value labels are drawn on top of the lines.
+
+## plot_out - plot of bubbles with highlighted outliers
+
+`plot_out()` plots the overall total value for each category alongside the individual group values, jittered horizontally so overlapping points remain visible. Groups whose value differs from the total by more than the `out` threshold are highlighted and labelled; the remaining groups are drawn as faint shadow points. The input data must contain both groups and a total row — typically produced by `prep_gr()` or `mean_bat_gr()` with `add_total = TRUE`.
+
+```{r}
+# Compare indicators
+#mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = rok, add_total = TRUE) |> 
+#  plot_out()
+```
 
 # Auxiliary functions
 
