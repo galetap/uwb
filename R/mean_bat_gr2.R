@@ -21,24 +21,45 @@
 #'              vars = c("num1", "num2", "num3", "num4", "num5"),
 #'              grvar = fak, grvar2 = pohlavi)
 #'
-mean_bat_gr2  <-
-  function(dat, vars, grvar, grvar2, round_places = 0,
-           na_lab = c("NA", "Bez odpov\u011bd\u010fi")) {
-    means = dat |>
-      select(c({{grvar}}, {{grvar2}}, all_of(vars))) |>
-      pivot_longer(cols = all_of(vars)) |>
-      mutate(value_chr = as.character(value),
-             value_chr = if_else(value_chr %in% na_lab, NA_character_, value_chr),
-             value_num = parse_number(value_chr)) |>
-      drop_na(value_num) |>
-      group_by(name, {{grvar}}, {{grvar2}}) |>
-      summarise(yvar = mean(value_num, na.rm = T),
-                nsize = n()) |>
-      ungroup() |>
-      impute_labs() |>
-      mutate(labvar = round(yvar, round_places),
-             xvar = paste0({{grvar}}, "\nn=", nsize),
-             zvar = {{grvar2}}
-      )
-    #means = try(means |> mutate(zvar = lab), silent = T) #try to rename items with lab from codebook
+mean_bat_gr2 <- function(
+    dat, vars, grvar, grvar2, round_places = 0,
+    add_total = FALSE, lab_total = "Z\u010cU",
+    na_lab = c("NA", "Bez odpov\u011bd\u010fi"),
+    show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
+    z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum) {
+
+  means = dat
+
+  # Add total as a pseudo-group before the main processing
+  if (add_total) {
+    total_rows <- means |>
+      mutate({{grvar}} := lab_total)  # Create duplicate rows with total label
+    means <- bind_rows(means, total_rows)
   }
+
+  means = means |>
+    select(c({{grvar}}, {{grvar2}}, all_of(vars))) |>
+    pivot_longer(cols = all_of(vars)) |>
+    mutate(
+      value_chr = as.character(value),
+      value_chr = if_else(value_chr %in% na_lab, NA_character_, value_chr),
+      value_num = parse_number(value_chr)) |>
+    drop_na(value_num) |>
+    group_by(name, {{grvar}}, {{grvar2}}) |>
+    summarise(
+      yvar = mean(value_num, na.rm = T),
+      nsize = n()) |>
+    mutate(
+      xvar_df = {{grvar}},
+      zvar_df = {{grvar2}}
+    ) |>
+    ungroup() |>
+    impute_labs() |>
+    generate_textlabs(round_places = round_places)
+
+  means <- means |>
+    polish_var(var_origin = "xvar_df", var_final = "xvar", wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
+    polish_var(var_origin = "zvar_df", var_final = "zvar", wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE)
+
+  return(means)
+}

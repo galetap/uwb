@@ -54,7 +54,6 @@ mean_bat_gr <- function(
       yvar = mean(value_num, na.rm = T),
       nsize = n()) |>
     mutate(
-      labvar = round(yvar, round_places),
       xvar_df = {{grvar}},
       zvar_df = name
     ) |>
