@@ -1,6 +1,7 @@
 #' Prep MC data in long format
-#'
-#' total + grouped by faculty
+#'total + grouped by faculty
+#' probably a result of one specialised task
+#' delete?
 #'
 #' @param dat A data frame
 #'
