@@ -358,14 +358,35 @@ Key arguments:
 -   `total` — optional label of the group (level of `zvar`) to be emphasized with larger points, e.g. the overall total.
 -   `add_points` — when `TRUE` (the default), points and value labels are drawn on top of the lines.
 
-## plot_out - plot of bubbles with highlighted outliers
+## plot_out - bubbles with central tendency and highlighted outliers
 
-`plot_out()` plots the overall total value for each category alongside the individual group values, jittered horizontally so overlapping points remain visible. Groups whose value differs from the total by more than the `out` threshold are highlighted and labelled; the remaining groups are drawn as faint shadow points. The input data must contain both groups and a total row — typically produced by `prep_gr()` or `mean_bat_gr()` with `add_total = TRUE`.
+`plot_out()` is a bubble plot designed to assess heterogeneity of faculties. It plots the overall total value (usually mean or percentage) and faculty-specific values as smaller points jittered around it so that overlapping points remain visible. Faculty points are muted (light grey) if they are close to the total value. Outlier faculties are highlighted with their official colors.
+
+The input data must contain groups (faculties) and a total row — typically produced by `prep_gr()`, `prep_gr2()` or `mean_bat_gr()` with `add_total = TRUE`. Sometimes it is necessary to fiddle with the data a bit before sending them to the `plot_out` function. The faculties must be stored in the `zvar`.
+
+Key arguments:
+
+-   `out` — threshold: groups differing from the total by more than this value are highlighted as outliers.
+-   `horiz` — when `TRUE`, the chart is drawn horizontally; default is `FALSE`.
+-   `total` — label of the total group (level of `zvar_df`) used as the reference. Default is `ZČU`.
+-   `add_line` — when `TRUE` (the default), a line connects the total reference values across categories.
+-   `alpha_shadow` — transparency of the non-highlighted (shadow) group points. Default `0.15`.
 
 ```{r}
-# Compare indicators
-#mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = rok, add_total = TRUE) |> 
-#  plot_out()
+# Compare means of a set of indicators
+mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = fak,
+  add_total  = TRUE, show_nsize = FALSE) |>          # keeps zvar_df clean so total = "ZČU" matches 
+  rename(xvar = zvar, zvar = xvar, xvar_df = zvar_df, zvar_df = xvar_df # renaming makes it fit the plot function 
+  ) |> 
+    plot_out(out = 0.5, horiz = TRUE, add_line = FALSE)
+
+# Gender composition FIX NEEDED
+prep_gr2(example_data, pohlavi, typ, fak, add_total = TRUE, show_nsize = FALSE) |> 
+  filter(zvar_df == "Muž") |> 
+  rename(
+     xvar     = zzvar,    zzvar    = xvar,
+    xvar_df  = zzvar_df, zzvar_df = xvar_df) |> 
+  plot_out(out = 1, horiz = TRUE)
 ```
 
 # Auxiliary functions

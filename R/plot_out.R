@@ -37,21 +37,28 @@ plot_out  <-
     d <- dat
   }
 
+  # Extract total reference yvar per item (zvar_df) × category (xvar),
+  # then join back so each row is compared only to its own item's total.
+  total_ref <- d |>
+    filter(zvar_df == total) |>
+    select(zvar_df, xvar, yvar_total_ref = yvar)
+
   d <- d |>
+    left_join(total_ref, by = c("zvar_df", "xvar")) |>
     mutate(
-      diff = abs(yvar - ifelse(length(yvar[zvar_df == total]) > 0,
-                               yvar[zvar_df == total], NA)),
-      yvar_show = case_when(zvar_df != total & diff > out ~ yvar),
-      yvar_shadow = case_when(zvar_df != total & diff <= out ~ yvar),
-      labvar_show = case_when(zvar_df != total & diff > out ~ labvar),
-      yvar_total = case_when(zvar_df == total ~ yvar),
+      diff         = abs(yvar - yvar_total_ref),
+      yvar_show    = case_when(zvar_df != total & diff > out  ~ yvar),
+      yvar_shadow  = case_when(zvar_df != total & diff <= out ~ yvar),
+      labvar_show  = case_when(zvar_df != total & diff > out  ~ labvar),
+      yvar_total   = case_when(zvar_df == total ~ yvar),
       labvar_total = case_when(zvar_df == total ~ labvar)
     ) |>
+    select(-yvar_total_ref) |>
     group_by(xvar) |>
     mutate(
       # Create fixed jitter offset based on group position
-      group_id = as.numeric(factor(zvar)),
-      n_groups = n_distinct(zvar),
+      group_id      = as.numeric(factor(zvar)),
+      n_groups      = n_distinct(zvar),
       jitter_offset = (group_id - (n_groups + 1) / 2) * (jitter_w / n_groups)
     ) |>
     ungroup()
@@ -66,7 +73,7 @@ plot_out  <-
     # optional trend line
     {if(add_line) geom_line(aes(y = yvar_total,
                                 x = as.numeric(xvar),
-                                group = fak),
+                             group = zvar),
                             linewidth = .uwb_vals$linesize,
                             color = c_total)} +
     geom_point(aes(y = yvar_total,
