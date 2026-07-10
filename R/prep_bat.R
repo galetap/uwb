@@ -7,8 +7,8 @@
 #'
 #' @param dat A data frame in wide format (one column per item).
 #' @param vars The battery item columns. Defaults to all columns of `dat`.
-#' @param drop_na Drop missing answers before computing percentages? Default
-#'   `TRUE`.
+#' @param drop_na Drop missing answers before computing percentages? 
+#' Each item might then have a different base size as a consequence. Default `TRUE`.
 #' @param show_n Show "N=###" in subtitle? Default `TRUE`.
 #' @param x_wrap Wrap long item labels onto several lines? Default `TRUE`.
 #' @param x_chrnum Characters per line when wrapping item labels.

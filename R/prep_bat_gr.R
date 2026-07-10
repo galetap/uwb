@@ -6,6 +6,8 @@
 #'
 #' @param dat A data frame in wide format (one column per item).
 #' @param vars The battery item columns. Defaults to all columns of `dat`.
+#' @param drop_na Drop missing answers before computing percentages? 
+#' As a result, the percentage base might differ across items within the same group. Default `TRUE`.
 #' @param grvar The grouping variable (unquoted column name).
 #' @param add_total Append an overall ("ZCU") group for comparison? Default
 #'   `FALSE`.
@@ -31,7 +33,7 @@
 #'             grvar = pohlavi)
 #'
 prep_bat_gr <- function(
-    dat, vars = names(dat), grvar,
+    dat, vars = names(dat), grvar, drop_na = TRUE,
     add_total = FALSE, lab_total = "Z\u010cU",
     show_nsize = TRUE, x_wrap = TRUE, x_chrnum = .uwb_vals$chrnum,
     z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum,
@@ -48,7 +50,13 @@ prep_bat_gr <- function(
   
   bat <- bat |>
     select(c({{grvar}}, all_of(vars))) |>
-    pivot_longer(cols = all_of(vars)) |>
+    pivot_longer(cols = all_of(vars)) 
+
+  if (drop_na) {
+    bat = bat |> drop_na(value)
+  }
+
+    bat <- bat |>
     group_by(name, {{grvar}}) |>
     count(value,.drop = FALSE) |>
     mutate(
