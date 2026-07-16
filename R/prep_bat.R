@@ -35,10 +35,11 @@ prep_bat  <-
   bat = bat |>
     group_by(name) |>
     count(value,.drop = FALSE) |>
-    mutate(yvar = n/sum(n)*100,
-           xvar_df = name,
-           zvar = value,
-           nsize = sum(n)) |>
+    mutate(
+      yvar = n/sum(n)*100,
+      xvar_df = name,
+      zvar = value,
+      nsize = sum(n)) |>
     filter(yvar > 0) |>
     generate_textlabs() |>
     impute_labs() |>

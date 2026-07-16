@@ -27,24 +27,27 @@
 #' @export
 #'
 plot_out  <-
-  function(dat, horiz = FALSE, total = "Z\u010cU",
-           c_total = .uwb_scales$faks[10], add_line = TRUE,
-           out, jitter_w = 0.3, alpha_shadow = 0.15, seed = 123456) {
+  function(dat, horiz = TRUE, total = "Z\u010cU", out, add_line = TRUE,
+    c_total = .uwb_scales$faks[10], jitter_w = 0.3, alpha_shadow = 0.15, seed = 123456) {
+# browser()
 
-  if(horiz) {
+    if(horiz) {
     d <- dat |> mutate(xvar = fct_rev(xvar))
   } else {
     d <- dat
   }
 
+  # Ensure xvar is a factor (it may arrive as character/glue after mutate(xvar = lab))
+  d <- d |> mutate(xvar = factor(xvar))
+
   # Extract total reference yvar per item (zvar_df) × category (xvar),
   # then join back so each row is compared only to its own item's total.
   total_ref <- d |>
     filter(zvar_df == total) |>
-    select(zvar_df, xvar, yvar_total_ref = yvar)
+    select(xvar, yvar_total_ref = yvar)
 
   d <- d |>
-    left_join(total_ref, by = c("zvar_df", "xvar")) |>
+    left_join(total_ref, by = c("xvar")) |>
     mutate(
       diff         = abs(yvar - yvar_total_ref),
       yvar_show    = case_when(zvar_df != total & diff > out  ~ yvar),
@@ -63,33 +66,28 @@ plot_out  <-
     ) |>
     ungroup()
 
-  p <-
-    ggplot(data = d, aes(y = yvar,
-                         x = as.numeric(xvar) + jitter_offset,
-                         color = zvar)) +
-    geom_point(aes(y = yvar_shadow),    # shadow points for groups
-               size = 0.65 * .uwb_vals$pointsize,
-               color = "black", alpha = alpha_shadow) +
+  p <- ggplot(data = d, 
+      aes(y = yvar, x = as.numeric(xvar) + jitter_offset, color = zvar)) +
+    # shadow points for groups
+    geom_point(aes(y = yvar_shadow),    
+      size = 0.65 * .uwb_vals$pointsize, color = "black", alpha = alpha_shadow) +
     # optional trend line
-    {if(add_line) geom_line(aes(y = yvar_total,
-                                x = as.numeric(xvar),
-                             group = zvar),
-                            linewidth = .uwb_vals$linesize,
-                            color = c_total)} +
-    geom_point(aes(y = yvar_total,
-                   x = as.numeric(xvar)),
-               size = .uwb_vals$pointsize, color = c_total) + # total
-    geom_point(aes(y = yvar_show),  # outlier groups
-               size = 0.65 * .uwb_vals$pointsize) +
-    geom_text(aes(y = yvar_total,
-                  x = as.numeric(xvar),
-                  label = labvar_total),
-              size = 0.85 * .uwb_vals$labsize, color = "white") +  # total
-    geom_text(aes(y = yvar_show, label = labvar_show), # outlier groups
-              size = 0.45 * .uwb_vals$labsize, color = "white", check_overlap = TRUE) +
+    {if(add_line) 
+      geom_line(aes(y = yvar_total, x = as.numeric(xvar), group = 1), 
+        linewidth = .uwb_vals$linesize, color = c_total)} +
+    # larger total points
+    geom_point(aes(y = yvar_total, x = as.numeric(xvar)), size = .uwb_vals$pointsize, color = c_total) +
+    # color points for outlier groups
+    geom_point(aes(y = yvar_show),  
+      size = 0.65 * .uwb_vals$pointsize) +
+    # text labels total
+    geom_text(aes(y = yvar_total, x = as.numeric(xvar), label = labvar_total),
+      size = 0.85 * .uwb_vals$labsize, color = "white") +  
+    # text labels outlier groups
+    geom_text(aes(y = yvar_show, label = labvar_show), 
+      size = 0.45 * .uwb_vals$labsize, color = "white", check_overlap = TRUE) +
     scale_color_uwb("faks") +
-    scale_x_continuous(breaks = 1:length(levels(droplevels(d$xvar))),
-                       labels = levels(droplevels(d$xvar))) +
+    scale_x_continuous(breaks = 1:length(levels(droplevels(d$xvar))), labels = levels(droplevels(d$xvar))) +
     labs(y = "", x = "", color = "",
          title = dat$title[1],
          subtitle = dat$subtitle[1],
@@ -105,4 +103,4 @@ plot_out  <-
   }
 
   return(p)
-}
+  }

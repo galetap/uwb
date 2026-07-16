@@ -263,9 +263,17 @@ Key arguments:
 The outcome is suitable for a plotting single items (groups compared to each other and optionally to the total) or a facet plot with all items shown separately for each group.
 
 ```{r}
+# Default settings showing N for each item
 prep_bat_gr(example_data |> drop_na(pohlavi),
             vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
             grvar = pohlavi) |> 
+  plot_stack() + facet_wrap(~ zzvar, scales = "free_y")  
+
+# Custom settings showing N for facets (better in this case because all items have the same N)
+prep_bat_gr(example_data |> drop_na(pohlavi),
+            vars = c("bat1", "bat2", "bat3", "bat4", "bat5"),
+            grvar = pohlavi, 
+            show_nsize = FALSE, show_nsize_zzvar = TRUE) |> 
   plot_stack() + facet_wrap(~ zzvar, scales = "free_y")  
 ```
 
@@ -327,7 +335,7 @@ mean_bat_gr2(example_data,
              grvar = fak, grvar2 = pohlavi)
 ```
 
-XXX plot trend or out are typical endpoints XXX
+`plot trend` or `plot_out` are typical endpoints.
 
 ## `plot_trend`, `plot_trend_gr` - plots of numerical values over time
 
@@ -360,9 +368,9 @@ Key arguments:
 
 ## plot_out - bubbles with central tendency and highlighted outliers
 
-`plot_out()` is a bubble plot designed to assess heterogeneity of faculties. It plots the overall total value (usually mean or percentage) and faculty-specific values as smaller points jittered around it so that overlapping points remain visible. Faculty points are muted (light grey) if they are close to the total value. Outlier faculties are highlighted with their official colors.
+`plot_out()` is a bubble plot designed to assess heterogeneity across groups. It plots the overall total value (usually mean or percentage) and group-specific values as smaller points jittered around it so that overlapping points remain visible. Group points are muted (light grey) if they are close to the total value. Outlier groups are highlighted. The default setting reflects the most common use case, i.e. showing the heterogeneity of faculties.
 
-The input data must contain groups (faculties) and a total row — typically produced by `prep_gr()`, `prep_gr2()` or `mean_bat_gr()` with `add_total = TRUE`. Sometimes it is necessary to fiddle with the data a bit before sending them to the `plot_out` function. The faculties must be stored in the `zvar`.
+The input data must contain groups (faculties) and a total row — typically produced by `prep_gr2()`, `prep_bat_gr` or `mean_bat_gr()` with `add_total = TRUE`. It  is necessary to fiddle with renaming the varialesa bit before sending them to the `plot_out` function. The group variably (typically faculty) must be stored in the `zvar` and `zvar_df`.
 
 Key arguments:
 
@@ -373,20 +381,37 @@ Key arguments:
 -   `alpha_shadow` — transparency of the non-highlighted (shadow) group points. Default `0.15`.
 
 ```{r}
-# Compare means of a set of indicators
+# Compare means of a set of numeric indicators
+# show_n = FALSE keeps zvar clean so that the codition zvar == "ZČU" inside the plot_out function matches 
 mean_bat_gr(example_data, vars = c("num1", "num2", "num3", "num4", "num5"), grvar = fak,
-  add_total  = TRUE, show_nsize = FALSE) |>          # keeps zvar_df clean so total = "ZČU" matches 
+  add_total  = TRUE, show_n = FALSE) |>          
   rename(xvar = zvar, zvar = xvar, xvar_df = zvar_df, zvar_df = xvar_df # renaming makes it fit the plot function 
   ) |> 
-    plot_out(out = 0.5, horiz = TRUE, add_line = FALSE)
+    plot_out(out = 0.5, add_line = FALSE) + ylim(0, 10)
 
-# Gender composition FIX NEEDED
-prep_gr2(example_data, pohlavi, typ, fak, add_total = TRUE, show_nsize = FALSE) |> 
+# Gender composition - heterogeneity across faculties and types 
+# The desired group var (typically fak) has to be grvar to assing total category correctly as a value of zvar (fak) not zzvar (typ)
+prep_gr2(example_data, pohlavi, fak, typ, add_total = TRUE, show_nsize = FALSE) |> 
   filter(zvar_df == "Muž") |> 
-  rename(
-     xvar     = zzvar,    zzvar    = xvar,
-    xvar_df  = zzvar_df, zzvar_df = xvar_df) |> 
-  plot_out(out = 1, horiz = TRUE)
+  select(-zvar, -zvar_df) |> 
+  rename(xvar = zzvar, xvar_df = zzvar_df, zvar_df  = xvar_df, zvar = xvar) |> 
+  plot_out(out = 10) + 
+    labs(
+      title = "% mužů mezi studujícími", 
+      y = %
+    )
+
+# Compare percentages in a battery
+prep_bat_gr(example_data, vars = c("bat1", "bat2", "bat3", "bat4", "bat5"), grvar = fak, 
+  show_nsize = FALSE, add_total = TRUE) |> 
+  filter(zvar_df == "Souhlasím") |> 
+  select(-zvar, -zvar_df) |> 
+  rename(zvar = zzvar, zvar_df = zzvar_df) |> 
+  plot_out(out = 5) + 
+  labs(
+    title = "% studujících, kteří souhlasí s těmito výroky", 
+    y = "%")
+
 ```
 
 # Auxiliary functions

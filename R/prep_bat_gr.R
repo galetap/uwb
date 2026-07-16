@@ -39,11 +39,12 @@ prep_bat_gr <- function(
     z_wrap = TRUE, z_chrnum = .uwb_vals$chrnum,
     show_nsize_zzvar = FALSE, zz_wrap = TRUE, zz_chrnum = .uwb_vals$chrnum) {
   
+  #browser()
   bat <- dat 
   
   # Add total as a pseudo-group before the main processing
     if (add_total) {
-      total_rows <- groups |>
+      total_rows <- bat |>
         mutate({{grvar}} := lab_total)  # Create duplicate rows with total label
       bat <- bind_rows(bat, total_rows)
     }
@@ -67,18 +68,20 @@ prep_bat_gr <- function(
       zzvar_df = {{grvar}},) |>
       filter(yvar > 0) 
   
-  bat_try = try(bat |> mutate(xvar_df = lab), silent = TRUE) #try to rename items with lab from codebook
-    if (!inherits(bat_try, "try-error")) bat <- bat_try
-  
   bat <- bat |> 
     group_by(xvar_df, name) |> 
-    polish_var(var_origin = "xvar_df", var_final = "xvar",
-      wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
-    polish_var(var_origin = "zvar_df", var_final = "zvar",
-      wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) |>
     generate_textlabs() |>
     impute_labs() |>
     ungroup()
+
+  bat_try = try(bat |> mutate(xvar_df = as.character(lab)), silent = TRUE) #try to rename items with lab from codebook
+  if (!inherits(bat_try, "try-error")) bat <- bat_try
+
+  bat <- bat |> 
+    polish_var(var_origin = "xvar_df", var_final = "xvar",
+      wrap = x_wrap, chrnum = x_chrnum, nsize = show_nsize) |>
+    polish_var(var_origin = "zvar_df", var_final = "zvar",
+      wrap = z_wrap, chrnum = z_chrnum, nsize = FALSE) 
 
   bat <- bat |> 
     rename(nsize_x = nsize) |> 
