@@ -398,7 +398,7 @@ prep_gr2(example_data, pohlavi, fak, typ, add_total = TRUE, show_nsize = FALSE) 
   plot_out(out = 10) + 
     labs(
       title = "% mužů mezi studujícími", 
-      y = %
+      y = "%"
     )
 
 # Compare percentages in a battery
