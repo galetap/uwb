@@ -30,12 +30,12 @@ plot_out  <- function(dat, horiz = TRUE, total = "Z\u010cU", out, add_line = TRU
     c_total = .uwb_scales$faks[10], jitter_w = 0.3, alpha_shadow = 0.15, seed = 123456) {
 # browser()
   # Ensure xvar is a factor (it may arrive as character/glue after mutate(xvar = lab))
-  d <- d |> mutate(xvar = factor(xvar))
+  d <- dat |> mutate(xvar = factor(xvar))
     
   if(horiz) {
-    d <- dat |> mutate(xvar = fct_rev(xvar))
+    d <- d |> mutate(xvar = fct_rev(xvar))
   } else {
-    d <- dat
+    d <- d
   }
   
   # Ensure data are grouped - grouping affects computation of the yvar_total_ref 
