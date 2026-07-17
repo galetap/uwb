@@ -73,7 +73,7 @@ plot_out  <- function(dat, horiz = TRUE, total = "Z\u010cU", out, add_line = TRU
     # optional trend line
     {if(add_line) 
       geom_line(aes(y = yvar_total, x = as.numeric(xvar), group = 1), 
-        linewidth = .uwb_vals$linesize, color = c_total)} +
+        linewidth = .uwb_vals$linesize, color = c_total, na.rm = TRUE)} +
     # larger total points
     geom_point(aes(y = yvar_total, x = as.numeric(xvar)), size = .uwb_vals$pointsize, color = c_total) +
     # color points for outlier groups
