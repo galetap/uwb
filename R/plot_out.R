@@ -26,29 +26,28 @@
 #' @returns A ggplot object.
 #' @export
 #'
-plot_out  <-
-  function(dat, horiz = TRUE, total = "Z\u010cU", out, add_line = TRUE,
+plot_out  <- function(dat, horiz = TRUE, total = "Z\u010cU", out, add_line = TRUE,
     c_total = .uwb_scales$faks[10], jitter_w = 0.3, alpha_shadow = 0.15, seed = 123456) {
 # browser()
-
-    if(horiz) {
+  # Ensure xvar is a factor (it may arrive as character/glue after mutate(xvar = lab))
+  d <- d |> mutate(xvar = factor(xvar))
+    
+  if(horiz) {
     d <- dat |> mutate(xvar = fct_rev(xvar))
   } else {
     d <- dat
   }
-
-  # Ensure xvar is a factor (it may arrive as character/glue after mutate(xvar = lab))
-  d <- d |> mutate(xvar = factor(xvar))
-
-  # Extract total reference yvar per item (zvar_df) × category (xvar),
-  # then join back so each row is compared only to its own item's total.
-  total_ref <- d |>
-    filter(zvar_df == total) |>
-    select(xvar, yvar_total_ref = yvar)
+  
+  # Ensure data are grouped - grouping affects computation of the yvar_total_ref 
+  # Grouping by zzvar is necessary in plots with facets so it is left on user to customize the grouping
+  # This is for the default situations where simple groping by xvar is needed, so that user doesnt need to mind grouping
+  if (!dplyr::is_grouped_df(d)) { 
+    d <- d |> group_by(xvar)
+  }
 
   d <- d |>
-    left_join(total_ref, by = c("xvar")) |>
     mutate(
+      yvar_total_ref = yvar[zvar_df == total][1], # reference total value
       diff         = abs(yvar - yvar_total_ref),
       yvar_show    = case_when(zvar_df != total & diff > out  ~ yvar),
       yvar_shadow  = case_when(zvar_df != total & diff <= out ~ yvar),
@@ -57,7 +56,7 @@ plot_out  <-
       labvar_total = case_when(zvar_df == total ~ labvar)
     ) |>
     select(-yvar_total_ref) |>
-    group_by(xvar) |>
+    group_by(xvar) |> # this is fine for data with zzvar
     mutate(
       # Create fixed jitter offset based on group position
       group_id      = as.numeric(factor(zvar)),
