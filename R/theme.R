@@ -35,7 +35,8 @@ theme_uwb <-  function(theme = theme_void()){
         size = 0.85 * .uwb_vals$tsize, family = .uwb_vals$font),
       # Text elements
       plot.title = ggtext::element_textbox_simple(
-        size = 1.25 * .uwb_vals$tsize, family = font, lineheight = .uwb_vals$lineheight_tit),
+        size = 1.25 * .uwb_vals$tsize, family = font, lineheight = .uwb_vals$lineheight_tit,
+        margin = margin(t = 10, b = 10)),
       plot.title.position = "plot",
       plot.subtitle = ggtext::element_textbox_simple(
         size = 0.85 * .uwb_vals$tsize, family = font, hjust = 0),
